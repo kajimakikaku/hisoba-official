@@ -1,0 +1,555 @@
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HISOBA - 動画アドネットワーク</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+
+        .hero-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1567&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* サンプル動画用のスタイル */
+        .ad-overlay {
+            transition: opacity 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <!-- ヘッダー -->
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="font-black text-2xl tracking-tighter text-white">HISOBA</a>
+                </div>
+                <nav class="hidden md:flex items-center gap-4">
+                    <a href="mailto:kajimakikaku.contact@gmail.com?subject=【HISOBA】資料請求のお問い合わせ"
+                        class="border border-gray-500 hover:border-white text-gray-300 hover:text-white px-4 py-2 rounded-full text-sm font-bold transition">資料請求</a>
+                    <a href="application_form.html"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full text-sm font-bold transition">お申し込み</a>
+                </nav>
+                <div class="md:hidden">
+                    <button class="text-gray-300 hover:text-white"><i class="fas fa-bars text-2xl"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <div class="hero-bg text-white py-16 md:py-24 relative overflow-hidden">
+        <!-- 背景調整用オーバーレイ -->
+        <div class="absolute inset-0 bg-black/40 z-0"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+
+            <!-- キャッチコピー -->
+            <h1 class="text-2xl md:text-3xl font-bold mb-8 leading-tight tracking-wide text-gray-200">
+                サービス/商品/求人などの認知拡大は<br>
+                <span
+                    class="text-4xl md:text-6xl font-black text-yellow-400 mt-2 block drop-shadow-xl">「HISOBA」の３秒広告！</span>
+            </h1>
+
+            <!-- 3秒広告とは？の説明エリア -->
+            <div
+                class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 max-w-5xl mx-auto mb-10 border border-white/20 shadow-2xl">
+                <h2 class="text-xl md:text-2xl font-bold mb-4 text-indigo-300 flex items-center justify-center">
+                    <i class="far fa-question-circle mr-2"></i>３秒広告とは？
+                </h2>
+                <p class="text-base md:text-lg leading-relaxed text-gray-100 mb-8">
+                    X(旧Twitter)のアダルト領域で活躍するインフルエンサー。<br class="hidden md:block">
+                    彼ら彼女らがXに投稿するアダルト動画の<span
+                        class="font-bold text-yellow-400 border-b-2 border-yellow-400">冒頭３秒間に任意の画像を表示</span>させてPRする広告です。
+                </p>
+
+                <!-- 図解：動画イメージ -->
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-gray-800 mb-12">
+
+                    <!-- Step 1: バナー -->
+                    <div
+                        class="bg-white p-3 rounded-xl shadow-lg w-full max-w-xs transform hover:scale-105 transition duration-300">
+                        <div
+                            class="bg-gradient-to-br from-indigo-500 to-purple-600 aspect-video rounded-lg flex flex-col items-center justify-center mb-2 relative overflow-hidden text-white border-4 border-yellow-400 box-border">
+                            <div class="text-center">
+                                <p class="font-bold text-lg">御社のPR画像</p>
+                                <p class="text-xs opacity-80">求人 / サービス / 商品</p>
+                            </div>
+                            <div
+                                class="absolute top-2 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-full font-mono">
+                                00:00 - 00:03</div>
+                        </div>
+                        <div class="text-left px-1">
+                            <p class="font-bold text-indigo-600 text-sm">① 冒頭3秒</p>
+                            <p class="text-xs text-gray-500">企業の広告バナーを表示</p>
+                        </div>
+                    </div>
+
+                    <!-- Arrow -->
+                    <div class="text-white text-3xl animate-pulse my-2 md:my-0">
+                        <i class="fas fa-chevron-down md:hidden"></i>
+                        <i class="fas fa-chevron-right hidden md:block"></i>
+                    </div>
+
+                    <!-- Step 2: 動画 -->
+                    <div
+                        class="bg-white p-3 rounded-xl shadow-lg w-full max-w-xs transform hover:scale-105 transition duration-300">
+                        <div
+                            class="bg-gray-800 aspect-video rounded-lg flex items-center justify-center mb-2 relative overflow-hidden group">
+
+                            <div
+                                class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60')] bg-cover opacity-50">
+                            </div>
+                            <i
+                                class="fas fa-play text-white text-4xl drop-shadow-lg group-hover:scale-110 transition"></i>
+                            <div class="absolute bottom-2 left-2 text-white text-xs flex items-center gap-1">
+                                <div class="w-4 h-4 rounded-full bg-gray-300"></div> @influencer
+                            </div>
+                        </div>
+                        <div class="text-left px-1">
+                            <p class="font-bold text-pink-600 text-sm">② 3秒後〜</p>
+                            <p class="text-xs text-gray-500">インフルエンサーの本編動画</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 実際のサンプル動画エリア -->
+                <div class="border-t border-white/20 pt-8">
+                    <h3 class="text-lg md:text-xl font-bold text-white mb-6">
+                        <i class="fas fa-video mr-2"></i>実際のサンプル（10秒）
+                    </h3>
+                    <p class="text-sm text-gray-300 mb-6">再生ボタンを押すと、<span
+                            class="text-yellow-400 font-bold">冒頭3秒間だけ広告が表示</span>され、その後本編に切り替わります。</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Sample 1 -->
+                        <div class="sample-video-container relative rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black aspect-video group cursor-pointer"
+                            onclick="playSample(this)">
+                            <!-- Video -->
+                            <video class="w-full h-full object-cover"
+                                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                                playsinline muted></video>
+
+                            <!-- 広告オーバーレイ (3秒後に消える) -->
+                            <div
+                                class="ad-overlay absolute inset-0 bg-blue-600 flex flex-col items-center justify-center text-white z-20">
+                                <div class="text-center p-4">
+                                    <h4
+                                        class="text-2xl font-black mb-2 bg-white text-blue-600 px-4 py-1 inline-block transform -rotate-2">
+                                        求人募集中!</h4>
+                                    <p class="font-bold text-lg mb-4">月収50万円〜可<br>未経験OK</p>
+                                    <span class="text-xs border border-white px-2 py-1 rounded">PR</span>
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 bg-black/50 text-[10px] px-2 py-1 rounded-full font-mono count-down">
+                                    00:03</div>
+                            </div>
+
+                            <!-- Play Button -->
+                            <div
+                                class="play-btn absolute inset-0 flex items-center justify-center z-30 bg-black/30 group-hover:bg-black/40 transition">
+                                <div
+                                    class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center border border-white/50 group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-white text-2xl ml-1"></i>
+                                </div>
+                            </div>
+
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-20">
+                                <p class="text-xs text-white font-bold"><i
+                                        class="fas fa-user-circle mr-1"></i>@daily_vlog_jp</p>
+                            </div>
+                        </div>
+
+                        <!-- Sample 2 -->
+                        <div class="sample-video-container relative rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black aspect-video group cursor-pointer"
+                            onclick="playSample(this)">
+                            <!-- Video -->
+                            <video class="w-full h-full object-cover"
+                                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+                                playsinline muted></video>
+
+                            <!-- 広告オーバーレイ -->
+                            <div
+                                class="ad-overlay absolute inset-0 bg-pink-500 flex flex-col items-center justify-center text-white z-20">
+                                <div class="text-center p-4">
+                                    <h4 class="text-2xl font-black mb-2 text-yellow-300 drop-shadow-md">新作コスメ💄</h4>
+                                    <p class="font-bold text-lg mb-4">本日発売開始！<br>限定カラーあり</p>
+                                    <span class="text-xs border border-white px-2 py-1 rounded">PR</span>
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 bg-black/50 text-[10px] px-2 py-1 rounded-full font-mono count-down">
+                                    00:03</div>
+                            </div>
+
+                            <!-- Play Button -->
+                            <div
+                                class="play-btn absolute inset-0 flex items-center justify-center z-30 bg-black/30 group-hover:bg-black/40 transition">
+                                <div
+                                    class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center border border-white/50 group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-white text-2xl ml-1"></i>
+                                </div>
+                            </div>
+
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-20">
+                                <p class="text-xs text-white font-bold"><i
+                                        class="fas fa-user-circle mr-1"></i>@beauty_cosme_x</p>
+                            </div>
+                        </div>
+
+                        <!-- Sample 3 -->
+                        <div class="sample-video-container relative rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black aspect-video group cursor-pointer"
+                            onclick="playSample(this)">
+                            <!-- Video -->
+                            <video class="w-full h-full object-cover"
+                                src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+                                playsinline muted></video>
+
+                            <!-- 広告オーバーレイ -->
+                            <div
+                                class="ad-overlay absolute inset-0 bg-emerald-600 flex flex-col items-center justify-center text-white z-20">
+                                <div class="text-center p-4">
+                                    <h4 class="text-2xl font-black mb-2 border-4 border-white p-1">神ゲー登場</h4>
+                                    <p class="font-bold text-lg mb-4 mt-2">今すぐダウンロード<br>SSR確定ガチャ！</p>
+                                    <span class="text-xs border border-white px-2 py-1 rounded">PR</span>
+                                </div>
+                                <div
+                                    class="absolute top-2 right-2 bg-black/50 text-[10px] px-2 py-1 rounded-full font-mono count-down">
+                                    00:03</div>
+                            </div>
+
+                            <!-- Play Button -->
+                            <div
+                                class="play-btn absolute inset-0 flex items-center justify-center z-30 bg-black/30 group-hover:bg-black/40 transition">
+                                <div
+                                    class="w-16 h-16 bg-white/20 backdrop-blur rounded-full flex items-center justify-center border border-white/50 group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-white text-2xl ml-1"></i>
+                                </div>
+                            </div>
+
+                            <div
+                                class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 z-20">
+                                <p class="text-xs text-white font-bold"><i
+                                        class="fas fa-user-circle mr-1"></i>@game_master_pro</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- お申し込みボタン -->
+                    <div class="mt-12 text-center flex flex-col md:flex-row justify-center gap-4">
+                        <a href="mailto:kajimakikaku.contact@gmail.com?subject=【HISOBA】資料請求のお問い合わせ"
+                            class="inline-block bg-white/20 hover:bg-white/30 text-white font-bold py-4 px-12 rounded-full border-2 border-white/50 backdrop-blur-sm transition transform hover:-translate-y-1 text-xl">
+                            <i class="fas fa-file-alt mr-2"></i> 資料請求
+                        </a>
+                        <a href="application_form.html"
+                            class="inline-block bg-yellow-400 text-slate-900 font-black py-4 px-16 rounded-full shadow-[0_0_30px_rgba(250,204,21,0.4)] hover:bg-yellow-300 transition transform hover:-translate-y-1 text-xl">
+                            <i class="fas fa-envelope mr-2"></i> お申し込み
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- サービスの流れ -->
+    <section class="py-16 bg-white border-b border-gray-100">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">ご利用の流れ</h2>
+                <p class="text-gray-500 mt-2">ご依頼からお支払い・完了までの6つのステップ</p>
+            </div>
+
+            <div class="space-y-8 relative">
+                <!-- タイムラインの連結線 (PC表示時) -->
+                <div class="absolute left-8 top-8 bottom-8 w-0.5 bg-gray-200 hidden md:block"></div>
+
+                <!-- STEP 1 -->
+                <div class="relative flex flex-col md:flex-row gap-6">
+                    <!-- Badge -->
+                    <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
+                        <div
+                            class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
+                            STEP 1</div>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
+                        <!-- 吹き出しの矢印 -->
+                        <div
+                            class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
+                        </div>
+
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2 border-gray-200">
+                            <i class="fas fa-file-signature text-indigo-500 mr-2"></i>お申し込み
+                        </h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            ウェブサイトからお申し込みください。<br>
+                            動画冒頭に挿入する「広告画像」と、リプライ欄に掲載する「誘導先URL」はお申し込み時にご提出いただきます。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="relative flex flex-col md:flex-row gap-6">
+                    <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
+                        <div
+                            class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
+                            STEP 2</div>
+                    </div>
+                    <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
+                        <div
+                            class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2 border-gray-200">
+                            <i class="fas fa-handshake-angle text-indigo-500 mr-2"></i>ご紹介・お支払い
+                        </h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            HISOBAが最適なインフルエンサーを選定し、担当者を通知します。<br>
+                            同時に請求書をメール送付しますので、クレジットカード等でお支払いください。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="relative flex flex-col md:flex-row gap-6">
+                    <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
+                        <div
+                            class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
+                            STEP 3</div>
+                    </div>
+                    <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
+                        <div
+                            class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2 border-gray-200">
+                            <i class="fas fa-video text-indigo-500 mr-2"></i>制作
+                        </h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            インフルエンサーが広告動画を制作します。<br>
+                            ご提出いただいた「広告画像」は、この動画の冒頭3秒間に挿入されます。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- STEP 4 -->
+                <div class="relative flex flex-col md:flex-row gap-6">
+                    <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
+                        <div
+                            class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
+                            STEP 4</div>
+                    </div>
+                    <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
+                        <div
+                            class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2 border-gray-200">
+                            <i class="fas fa-check text-indigo-500 mr-2"></i>検収
+                        </h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            制作された広告動画をお送りいたします。<br>
+                            問題がなければ「検収完了」の旨をご返信ください。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- STEP 5 -->
+                <div class="relative flex flex-col md:flex-row gap-6">
+                    <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
+                        <div
+                            class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
+                            STEP 5</div>
+                    </div>
+                    <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
+                        <div
+                            class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2 border-gray-200">
+                            <i class="fab fa-twitter text-indigo-500 mr-2"></i>投稿・投稿削除
+                        </h3>
+                        <div class="space-y-3">
+                            <p class="text-sm text-gray-700 leading-relaxed">
+                                インフルエンサーが広告動画を投稿し、リプライ（ツリー形式）にURLを掲載します。<br>
+                                保証インプレッションに到達後、投稿は削除されます。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 6 -->
+                <div class="relative flex flex-col md:flex-row gap-6">
+                    <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
+                        <div
+                            class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
+                            STEP 6</div>
+                    </div>
+                    <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
+                        <div
+                            class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
+                        </div>
+                        <h3
+                            class="text-xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2 border-gray-200">
+                            <i class="fas fa-flag-checkered text-indigo-500 mr-2"></i>完了
+                        </h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            投稿の削除をもって、本案件は終了となります。<br>
+                            なお、インプレッション数が保証数値に達しなかった場合は、ご利用料金を全額返金いたします。
+                        </p>
+                        <div
+                            class="mt-4 bg-green-50 p-3 rounded text-sm text-green-800 font-bold text-center border border-green-200">
+                            <i class="fas fa-check-circle mr-1"></i>完了
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- よくあるご質問 (Q&A) -->
+    <section class="py-16 bg-slate-50 border-b border-gray-100">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900">よくあるご質問</h2>
+                <p class="text-gray-500 mt-2">ご依頼に関する代表的なQ&A</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Q1 -->
+                <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <summary
+                        class="flex justify-between items-center font-bold cursor-pointer p-5 list-none text-gray-800 hover:text-indigo-600 transition">
+                        <span class="flex items-center"><span
+                                class="text-indigo-600 mr-3 text-lg">Q.</span>どのような商材と相性がいいですか？</span>
+                        <span class="transition group-open:rotate-180"><i
+                                class="fas fa-chevron-down text-gray-400"></i></span>
+                    </summary>
+                    <div class="text-gray-600 px-5 pb-5 pl-10 text-sm leading-relaxed border-t border-gray-100 pt-3">
+                        <span class="font-bold text-gray-800 mr-2">A.</span>
+                        HISOBAからご紹介するインフルエンサー様は、アダルト領域というセンシティブかつ、極めて熱量の高いファン層を抱えているのが特徴です。<br>
+                        そのため、大手プラットフォームでは広告審査が通りにくい商材や、個人の衝動や欲求に直接訴えかけるサービスと非常に相性がよいです。
+                    </div>
+                </details>
+                <!-- Q2 -->
+                <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <summary
+                        class="flex justify-between items-center font-bold cursor-pointer p-5 list-none text-gray-800 hover:text-indigo-600 transition">
+                        <span class="flex items-center"><span
+                                class="text-indigo-600 mr-3 text-lg">Q.</span>動画の制作費はかかりますか？</span>
+                        <span class="transition group-open:rotate-180"><i
+                                class="fas fa-chevron-down text-gray-400"></i></span>
+                    </summary>
+                    <div class="text-gray-600 px-5 pb-5 pl-10 text-sm leading-relaxed border-t border-gray-100 pt-3">
+                        <span class="font-bold text-gray-800 mr-2">A.</span>
+                        いいえ、動画制作費はかかりません。企業様にご用意いただくのは「広告画像（静止画）」と誘導先URLのみです。動画の制作は、インフルエンサー様が弊社提供の自動制作ツールを使用して行います。
+                    </div>
+                </details>
+                <!-- Q3 -->
+                <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <summary
+                        class="flex justify-between items-center font-bold cursor-pointer p-5 list-none text-gray-800 hover:text-indigo-600 transition">
+                        <span class="flex items-center"><span
+                                class="text-indigo-600 mr-3 text-lg">Q.</span>記載の料金以外に費用はかかりますか？</span>
+                        <span class="transition group-open:rotate-180"><i
+                                class="fas fa-chevron-down text-gray-400"></i></span>
+                    </summary>
+                    <div class="text-gray-600 px-5 pb-5 pl-10 text-sm leading-relaxed border-t border-gray-100 pt-3">
+                        <span class="font-bold text-gray-800 mr-2">A.</span>
+                        いいえ。記載の料金以外に費用はかかりません。料金は、インフルエンサー様への報酬およびHISOBA利用手数料の合計額です。
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="bg-slate-900 text-gray-400 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-start md:gap-16 gap-8">
+                <div class="flex-shrink-0">
+                    <h2 class="text-white text-2xl font-black mb-4">HISOBA</h2>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-4">運営情報</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="company.html" class="hover:text-white">運営会社情報</a></li>
+                        <li><a href="https://docs.google.com/document/d/1PURYceS0DHo1MSKaqgwcO0gejiMq4LIJ6uLYckE391I/edit?usp=sharing"
+                                class="hover:text-white" target="_blank">プライバシーポリシー</a></li>
+                        <li class="mt-4"><a href="https://x.com/hisoba_?s=21" class="text-white" target="_blank"><i
+                                    class="fab fa-x-twitter text-xl"></i>
+                                公式Xアカウント</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-10 pt-8 text-center text-xs">
+                &copy; 2026 HISOBA All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function playSample(container) {
+            const video = container.querySelector('video');
+            const overlay = container.querySelector('.ad-overlay');
+            const playBtn = container.querySelector('.play-btn');
+            const timer = container.querySelector('.count-down');
+
+            if (video.paused) {
+                // Play
+                video.currentTime = 0;
+                video.play();
+                playBtn.classList.add('hidden');
+
+                // Show overlay
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+
+                // Countdown logic (Simulation)
+                let timeLeft = 3;
+                timer.textContent = `00:0${timeLeft}`;
+
+                const countdown = setInterval(() => {
+                    timeLeft--;
+                    timer.textContent = `00:0${timeLeft}`;
+                    if (timeLeft <= 0) clearInterval(countdown);
+                }, 1000);
+
+                // Hide overlay after 3 seconds
+                setTimeout(() => {
+                    overlay.classList.add('opacity-0', 'pointer-events-none');
+                }, 3000);
+
+                // Reset UI when video ends
+                video.onended = () => {
+                    playBtn.classList.remove('hidden');
+                    overlay.classList.remove('opacity-0', 'pointer-events-none'); // Reset overlay for next play
+                    timer.textContent = "00:03";
+                };
+
+            } else {
+                // Pause
+                video.pause();
+                playBtn.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+
+</html>
