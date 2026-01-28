@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ja">
 
 <head>
@@ -28,19 +29,24 @@
 
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
-    <!-- ヘッダー -->
     <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 flex items-center">
                     <a href="index.html" class="font-black text-2xl tracking-tighter text-white">HISOBA</a>
                 </div>
-                <nav class="hidden md:flex items-center gap-4">
+                
+                <nav class="hidden md:flex items-center gap-3">
+                    <a href="tool.html" class="text-white bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-full text-sm font-bold transition flex items-center gap-2 border border-slate-600">
+                        <i class="fas fa-layer-group"></i> 結合ツール
+                    </a>
+
                     <a href="mailto:kajimakikaku.contact@gmail.com?subject=【HISOBA】資料請求のお問い合わせ"
                         class="border border-gray-500 hover:border-white text-gray-300 hover:text-white px-4 py-2 rounded-full text-sm font-bold transition">資料請求</a>
                     <a href="application_form.html"
                         class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full text-sm font-bold transition">お申し込み</a>
                 </nav>
+
                 <div class="md:hidden">
                     <button class="text-gray-300 hover:text-white"><i class="fas fa-bars text-2xl"></i></button>
                 </div>
@@ -48,21 +54,17 @@
         </div>
     </header>
 
-    <!-- ヒーローセクション -->
     <div class="hero-bg text-white py-16 md:py-24 relative overflow-hidden">
-        <!-- 背景調整用オーバーレイ -->
         <div class="absolute inset-0 bg-black/40 z-0"></div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
 
-            <!-- キャッチコピー -->
             <h1 class="text-2xl md:text-3xl font-bold mb-8 leading-tight tracking-wide text-gray-200">
                 サービス/商品/求人などの認知拡大は<br>
                 <span
                     class="text-4xl md:text-6xl font-black text-yellow-400 mt-2 block drop-shadow-xl">「HISOBA」の３秒広告！</span>
             </h1>
 
-            <!-- 3秒広告とは？の説明エリア -->
             <div
                 class="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-8 max-w-5xl mx-auto mb-10 border border-white/20 shadow-2xl">
                 <h2 class="text-xl md:text-2xl font-bold mb-4 text-indigo-300 flex items-center justify-center">
@@ -74,10 +76,8 @@
                         class="font-bold text-yellow-400 border-b-2 border-yellow-400">冒頭３秒間に任意の画像を表示</span>させてPRする広告です。
                 </p>
 
-                <!-- 図解：動画イメージ -->
                 <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-gray-800 mb-12">
 
-                    <!-- Step 1: バナー -->
                     <div
                         class="bg-white p-3 rounded-xl shadow-lg w-full max-w-xs transform hover:scale-105 transition duration-300">
                         <div
@@ -96,13 +96,11 @@
                         </div>
                     </div>
 
-                    <!-- Arrow -->
                     <div class="text-white text-3xl animate-pulse my-2 md:my-0">
                         <i class="fas fa-chevron-down md:hidden"></i>
                         <i class="fas fa-chevron-right hidden md:block"></i>
                     </div>
 
-                    <!-- Step 2: 動画 -->
                     <div
                         class="bg-white p-3 rounded-xl shadow-lg w-full max-w-xs transform hover:scale-105 transition duration-300">
                         <div
@@ -125,7 +123,6 @@
 
                 </div>
 
-                <!-- 実際のサンプル動画エリア -->
                 <div class="border-t border-white/20 pt-8">
                     <h3 class="text-lg md:text-xl font-bold text-white mb-6">
                         <i class="fas fa-video mr-2"></i>実際のサンプル（10秒）
@@ -134,15 +131,12 @@
                             class="text-yellow-400 font-bold">冒頭3秒間だけ広告が表示</span>され、その後本編に切り替わります。</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Sample 1 -->
                         <div class="sample-video-container relative rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black aspect-video group cursor-pointer"
                             onclick="playSample(this)">
-                            <!-- Video -->
                             <video class="w-full h-full object-cover"
                                 src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
                                 playsinline muted></video>
 
-                            <!-- 広告オーバーレイ (3秒後に消える) -->
                             <div
                                 class="ad-overlay absolute inset-0 bg-blue-600 flex flex-col items-center justify-center text-white z-20">
                                 <div class="text-center p-4">
@@ -157,7 +151,6 @@
                                     00:03</div>
                             </div>
 
-                            <!-- Play Button -->
                             <div
                                 class="play-btn absolute inset-0 flex items-center justify-center z-30 bg-black/30 group-hover:bg-black/40 transition">
                                 <div
@@ -173,15 +166,12 @@
                             </div>
                         </div>
 
-                        <!-- Sample 2 -->
                         <div class="sample-video-container relative rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black aspect-video group cursor-pointer"
                             onclick="playSample(this)">
-                            <!-- Video -->
                             <video class="w-full h-full object-cover"
                                 src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
                                 playsinline muted></video>
 
-                            <!-- 広告オーバーレイ -->
                             <div
                                 class="ad-overlay absolute inset-0 bg-pink-500 flex flex-col items-center justify-center text-white z-20">
                                 <div class="text-center p-4">
@@ -194,7 +184,6 @@
                                     00:03</div>
                             </div>
 
-                            <!-- Play Button -->
                             <div
                                 class="play-btn absolute inset-0 flex items-center justify-center z-30 bg-black/30 group-hover:bg-black/40 transition">
                                 <div
@@ -210,15 +199,12 @@
                             </div>
                         </div>
 
-                        <!-- Sample 3 -->
                         <div class="sample-video-container relative rounded-xl overflow-hidden shadow-2xl border-2 border-slate-700 bg-black aspect-video group cursor-pointer"
                             onclick="playSample(this)">
-                            <!-- Video -->
                             <video class="w-full h-full object-cover"
                                 src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
                                 playsinline muted></video>
 
-                            <!-- 広告オーバーレイ -->
                             <div
                                 class="ad-overlay absolute inset-0 bg-emerald-600 flex flex-col items-center justify-center text-white z-20">
                                 <div class="text-center p-4">
@@ -231,7 +217,6 @@
                                     00:03</div>
                             </div>
 
-                            <!-- Play Button -->
                             <div
                                 class="play-btn absolute inset-0 flex items-center justify-center z-30 bg-black/30 group-hover:bg-black/40 transition">
                                 <div
@@ -249,7 +234,6 @@
 
                     </div>
 
-                    <!-- お申し込みボタン -->
                     <div class="mt-12 text-center flex flex-col md:flex-row justify-center gap-4">
                         <a href="mailto:kajimakikaku.contact@gmail.com?subject=【HISOBA】資料請求のお問い合わせ"
                             class="inline-block bg-white/20 hover:bg-white/30 text-white font-bold py-4 px-12 rounded-full border-2 border-white/50 backdrop-blur-sm transition transform hover:-translate-y-1 text-xl">
@@ -266,7 +250,6 @@
         </div>
     </div>
 
-    <!-- サービスの流れ -->
     <section class="py-16 bg-white border-b border-gray-100">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
@@ -275,20 +258,15 @@
             </div>
 
             <div class="space-y-8 relative">
-                <!-- タイムラインの連結線 (PC表示時) -->
                 <div class="absolute left-8 top-8 bottom-8 w-0.5 bg-gray-200 hidden md:block"></div>
 
-                <!-- STEP 1 -->
                 <div class="relative flex flex-col md:flex-row gap-6">
-                    <!-- Badge -->
                     <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
                         <div
                             class="bg-indigo-600 text-white font-bold w-16 h-16 rounded-full flex items-center justify-center shadow-md border-4 border-white text-sm">
                             STEP 1</div>
                     </div>
-                    <!-- Content -->
                     <div class="flex-grow bg-gray-50 rounded-xl p-6 border border-gray-200 shadow-sm relative w-full">
-                        <!-- 吹き出しの矢印 -->
                         <div
                             class="absolute top-6 left-0 -ml-2 w-4 h-4 bg-gray-50 border-b border-l border-gray-200 transform rotate-45 hidden md:block">
                         </div>
@@ -304,7 +282,6 @@
                     </div>
                 </div>
 
-                <!-- STEP 2 -->
                 <div class="relative flex flex-col md:flex-row gap-6">
                     <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
                         <div
@@ -326,7 +303,6 @@
                     </div>
                 </div>
 
-                <!-- STEP 3 -->
                 <div class="relative flex flex-col md:flex-row gap-6">
                     <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
                         <div
@@ -348,7 +324,6 @@
                     </div>
                 </div>
 
-                <!-- STEP 4 -->
                 <div class="relative flex flex-col md:flex-row gap-6">
                     <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
                         <div
@@ -370,7 +345,6 @@
                     </div>
                 </div>
 
-                <!-- STEP 5 -->
                 <div class="relative flex flex-col md:flex-row gap-6">
                     <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
                         <div
@@ -394,7 +368,6 @@
                     </div>
                 </div>
 
-                <!-- STEP 6 -->
                 <div class="relative flex flex-col md:flex-row gap-6">
                     <div class="flex-shrink-0 flex flex-col items-center md:items-start z-10">
                         <div
@@ -424,7 +397,6 @@
         </div>
     </section>
 
-    <!-- よくあるご質問 (Q&A) -->
     <section class="py-16 bg-slate-50 border-b border-gray-100">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
@@ -433,7 +405,6 @@
             </div>
 
             <div class="space-y-4">
-                <!-- Q1 -->
                 <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <summary
                         class="flex justify-between items-center font-bold cursor-pointer p-5 list-none text-gray-800 hover:text-indigo-600 transition">
@@ -448,7 +419,6 @@
                         そのため、大手プラットフォームでは広告審査が通りにくい商材や、個人の衝動や欲求に直接訴えかけるサービスと非常に相性がよいです。
                     </div>
                 </details>
-                <!-- Q2 -->
                 <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <summary
                         class="flex justify-between items-center font-bold cursor-pointer p-5 list-none text-gray-800 hover:text-indigo-600 transition">
@@ -462,7 +432,6 @@
                         いいえ、動画制作費はかかりません。企業様にご用意いただくのは「広告画像（静止画）」と誘導先URLのみです。動画の制作は、インフルエンサー様が弊社提供の自動制作ツールを使用して行います。
                     </div>
                 </details>
-                <!-- Q3 -->
                 <details class="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <summary
                         class="flex justify-between items-center font-bold cursor-pointer p-5 list-none text-gray-800 hover:text-indigo-600 transition">
@@ -480,7 +449,6 @@
         </div>
     </section>
 
-    <!-- フッター -->
     <footer class="bg-slate-900 text-gray-400 py-10 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-start md:gap-16 gap-8">
