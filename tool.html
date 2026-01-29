@@ -60,169 +60,183 @@
     </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
 
-    <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
-
-        <!-- ヘッダー -->
-        <div class="bg-indigo-600 p-6 text-white text-center relative">
-            <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-video mr-2"></i>動画結合ツール</h1>
-        </div>
-
-        <div class="p-6 md:p-8 space-y-8">
-
-            <!-- Audio Selection Step -->
-            <!-- Audio Selection Removed (Fixed to Luxury Deep) -->
-            <div class="hidden"></div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Step 1: 企業画像 -->
-                <div class="flex flex-col gap-2">
-                    <label class="font-bold text-gray-700 block">
-                        <span class="bg-gray-800 text-white px-2 py-0.5 rounded text-sm mr-2">Step 1</span>広告画像
-                    </label>
-                    <div id="zone-img"
-                        class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
-                        <input type="file" id="file-img" accept="image/*"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                        <div id="preview-img-box" class="hidden w-full h-full flex items-center justify-center p-2">
-                            <img id="preview-img" class="max-h-full max-w-full object-contain shadow-sm rounded">
-                        </div>
-                        <div id="placeholder-img"
-                            class="pointer-events-none text-center group-hover:scale-105 transition-transform">
-                            <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
-                            <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
-                            <p class="text-xs text-gray-400 mt-1">またはクリックして選択</p>
-                        </div>
-                    </div>
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="index.html" class="font-black text-2xl tracking-tighter text-white">HISOBA</a>
                 </div>
-
-                <!-- Step 2: 動画 -->
-                <div class="flex flex-col gap-2">
-                    <label class="font-bold text-gray-700 block">
-                        <span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm mr-2">Step 2</span>本編動画
-                    </label>
-                    <div id="zone-vid"
-                        class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
-                        <input type="file" id="file-vid" accept="video/*"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                        <div id="preview-vid-box" class="hidden w-full h-full flex items-center justify-center p-2">
-                            <video id="preview-vid"
-                                class="max-h-full max-w-full object-contain shadow-sm rounded"></video>
-                        </div>
-                        <div id="placeholder-vid"
-                            class="pointer-events-none text-center group-hover:scale-105 transition-transform">
-                            <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
-                            <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
-                            <p class="text-xs text-gray-400 mt-1">またはクリックして選択</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Button -->
-            <div class="flex justify-center pt-2">
-                <button id="create-btn" disabled
-                    class="bg-gray-300 cursor-not-allowed text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 flex items-center gap-3 text-lg w-full md:w-auto justify-center transform active:scale-95">
-                    <i class="fas fa-layer-group"></i> 動画を作成する
-                </button>
-            </div>
-
-            <!-- Progress & Preview -->
-            <div id="progress-area"
-                class="hidden space-y-4 bg-white p-6 rounded-xl border-2 border-indigo-100 shadow-inner">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <span id="status-text" class="font-bold text-indigo-800 text-lg">処理準備中...</span>
-                        <p class="text-xs text-gray-500 mt-1">※ブラウザを閉じないでください</p>
-                    </div>
-                    <div class="loader"></div>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                    <div id="progress-bar"
-                        class="bg-indigo-600 h-3 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(79,70,229,0.5)]"
-                        style="width: 0%"></div>
-                </div>
-                <!-- 内部処理用の隠しキャンバス -->
-                <canvas id="canvas" class="hidden"></canvas>
-            </div>
-
-            <!-- Result -->
-            <div id="result-area"
-                class="hidden bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
-                <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！
-                </h3>
-                <video id="result-video" controls
-                    class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
-                <div class="flex flex-col md:flex-row justify-center gap-4">
-                    <a id="download-btn" href="#" download="merged_video.webm"
-                        class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
-                        <i class="fas fa-download mr-2"></i> 保存する (WebM)
+                <nav class="flex items-center">
+                    <a href="index.html" class="text-gray-300 hover:text-white transition text-sm font-bold">
+                        <i class="fas fa-arrow-left mr-1"></i> TOPへ戻る
                     </a>
-                    <button onclick="location.reload()"
-                        class="inline-flex items-center justify-center bg-white text-gray-600 font-bold py-3 px-6 rounded-full border border-gray-300 hover:bg-gray-50 transition">
-                        もう一度作成
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4">
+        
+        <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+            <div class="bg-indigo-600 p-6 text-white text-center relative">
+                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-video mr-2"></i>動画結合ツール</h1>
+            </div>
+
+            <div class="p-6 md:p-8 space-y-8">
+
+                <div class="hidden"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label class="font-bold text-gray-700 block">
+                            <span class="bg-gray-800 text-white px-2 py-0.5 rounded text-sm mr-2">Step 1</span>広告画像
+                        </label>
+                        <div id="zone-img"
+                            class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
+                            <input type="file" id="file-img" accept="image/*"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <div id="preview-img-box" class="hidden w-full h-full flex items-center justify-center p-2">
+                                <img id="preview-img" class="max-h-full max-w-full object-contain shadow-sm rounded">
+                            </div>
+                            <div id="placeholder-img"
+                                class="pointer-events-none text-center group-hover:scale-105 transition-transform">
+                                <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
+                                <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
+                                <p class="text-xs text-gray-400 mt-1">またはクリックして選択</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="font-bold text-gray-700 block">
+                            <span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm mr-2">Step 2</span>本編動画
+                        </label>
+                        <div id="zone-vid"
+                            class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
+                            <input type="file" id="file-vid" accept="video/*"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            <div id="preview-vid-box" class="hidden w-full h-full flex items-center justify-center p-2">
+                                <video id="preview-vid"
+                                    class="max-h-full max-w-full object-contain shadow-sm rounded"></video>
+                            </div>
+                            <div id="placeholder-vid"
+                                class="pointer-events-none text-center group-hover:scale-105 transition-transform">
+                                <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
+                                <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
+                                <p class="text-xs text-gray-400 mt-1">またはクリックして選択</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center pt-2">
+                    <button id="create-btn" disabled
+                        class="bg-gray-300 cursor-not-allowed text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 flex items-center gap-3 text-lg w-full md:w-auto justify-center transform active:scale-95">
+                        <i class="fas fa-layer-group"></i> 動画を作成する
                     </button>
                 </div>
-            </div>
 
-            <!-- ガイドライン (Moved directly into main layout, after result) -->
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm mt-8">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 mt-0.5">
-                        <i class="fas fa-circle-info text-blue-500 text-base"></i>
+                <div id="progress-area"
+                    class="hidden space-y-4 bg-white p-6 rounded-xl border-2 border-indigo-100 shadow-inner">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span id="status-text" class="font-bold text-indigo-800 text-lg">処理準備中...</span>
+                            <p class="text-xs text-gray-500 mt-1">※ブラウザを閉じないでください</p>
+                        </div>
+                        <div class="loader"></div>
                     </div>
-                    <div class="ml-3 w-full">
+                    <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar"
+                            class="bg-indigo-600 h-3 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(79,70,229,0.5)]"
+                            style="width: 0%"></div>
+                    </div>
+                    <canvas id="canvas" class="hidden"></canvas>
+                </div>
 
-                        <!-- Section 1 -->
-                        <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 編集・合成について</h2>
-                        <div class="space-y-2 mb-4">
-                            <div class="bg-white p-2 rounded border border-blue-100">
-                                <p class="text-xs text-gray-700">
-                                    <span class="font-bold text-blue-700">冒頭音声:</span>
-                                    広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。
-                                </p>
-                            </div>
-                            <div class="bg-white p-2 rounded border border-blue-100">
-                                <p class="text-xs text-gray-700">
-                                    <span class="font-bold text-blue-700">余白:</span>
-                                    画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。
-                                </p>
-                            </div>
-                            <div class="bg-white p-2 rounded border border-blue-100">
-                                <p class="text-xs text-gray-700">
-                                    <span class="font-bold text-blue-700">サムネイル:</span>
-                                    本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Section 2 -->
-                        <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ
-                        </h2>
-                        <div class="space-y-2">
-
-                            <div class="bg-white p-2 rounded border border-blue-100">
-                                <p class="text-xs text-gray-700">
-                                    <span class="font-bold text-blue-700">所要時間:</span>
-                                    生成には本編動画の再生時間と同程度の時間がかかります（例：5分の動画なら約5分）。
-                                </p>
-                            </div>
-                            <div class="bg-white p-2 rounded border border-blue-100">
-                                <p class="text-xs text-gray-700">
-                                    <span class="font-bold text-blue-700">プライバシー:</span>
-                                    動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。<br>
-                                    外部に流出することはありませんのでご安心ください。
-                                </p>
-                            </div>
-                        </div>
-
+                <div id="result-area"
+                    class="hidden bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
+                    <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！
+                    </h3>
+                    <video id="result-video" controls
+                        class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
+                    <div class="flex flex-col md:flex-row justify-center gap-4">
+                        <a id="download-btn" href="#" download="merged_video.webm"
+                            class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
+                            <i class="fas fa-download mr-2"></i> 保存する (WebM)
+                        </a>
+                        <button onclick="location.reload()"
+                            class="inline-flex items-center justify-center bg-white text-gray-600 font-bold py-3 px-6 rounded-full border border-gray-300 hover:bg-gray-50 transition">
+                            もう一度作成
+                        </button>
                     </div>
                 </div>
-            </div>
 
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm mt-8">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <i class="fas fa-circle-info text-blue-500 text-base"></i>
+                        </div>
+                        <div class="ml-3 w-full">
+
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 編集・合成について</h2>
+                            <div class="space-y-2 mb-4">
+                                <div class="bg-white p-2 rounded border border-blue-100">
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">冒頭音声:</span>
+                                        広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。
+                                    </p>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-blue-100">
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">余白:</span>
+                                        画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。
+                                    </p>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-blue-100">
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">サムネイル:</span>
+                                        本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。
+                                    </p>
+                                </div>
+                            </div>
+
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ
+                            </h2>
+                            <div class="space-y-2">
+
+                                <div class="bg-white p-2 rounded border border-blue-100">
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">所要時間:</span>
+                                        生成には本編動画の再生時間と同程度の時間がかかります（例：5分の動画なら約5分）。
+                                    </p>
+                                </div>
+                                <div class="bg-white p-2 rounded border border-blue-100">
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">プライバシー:</span>
+                                        動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。<br>
+                                        外部に流出することはありませんのでご安心ください。
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
+    </main>
+
+    <footer class="bg-slate-900 text-gray-400 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="border-t border-slate-800 pt-8 text-center text-xs">
+                &copy; 2026 HISOBA All rights reserved.
+            </div>
+        </div>
+    </footer>
 
     <script>
         const els = {
@@ -435,12 +449,18 @@
             try {
                 // 1. Load Assets
                 const img = await new Promise((r, j) => {
-                    const i = new Image(); i.onload = () => r(i); i.onerror = j; i.src = URL.createObjectURL(fileImg);
+                    const i = new Image();
+                    i.onload = () => r(i);
+                    i.onerror = j;
+                    i.src = URL.createObjectURL(fileImg);
                 });
                 const vid = await new Promise((r, j) => {
                     const v = document.createElement('video');
-                    v.onloadedmetadata = () => r(v); v.onerror = j; v.src = URL.createObjectURL(fileVid);
-                    v.muted = false; v.crossOrigin = 'anonymous'; // Ensure audio is ready
+                    v.onloadedmetadata = () => r(v);
+                    v.onerror = j;
+                    v.src = URL.createObjectURL(fileVid);
+                    v.muted = false;
+                    v.crossOrigin = 'anonymous'; // Ensure audio is ready
                 });
 
                 // 2. Setup Canvas
@@ -449,7 +469,8 @@
                 const w = width % 2 === 0 ? width : width + 1;
                 const h = height % 2 === 0 ? height : height + 1;
 
-                els.canvas.width = w; els.canvas.height = h;
+                els.canvas.width = w;
+                els.canvas.height = h;
                 const ctx = els.canvas.getContext('2d');
 
                 // 3. Audio Setup
@@ -479,10 +500,14 @@
                 });
 
                 const chunks = [];
-                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+                recorder.ondataavailable = e => {
+                    if (e.data.size > 0) chunks.push(e.data);
+                };
 
                 recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const blob = new Blob(chunks, {
+                        type: 'video/webm'
+                    });
                     const url = URL.createObjectURL(blob);
                     els.result.src = url;
                     els.dl.href = url;
@@ -509,7 +534,8 @@
                 SoundGen.playFixed(ac, dest, ac.currentTime);
 
                 for (let i = 0; i < fps * imgDuration; i++) {
-                    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(0, 0, w, h);
                     drawImageContain(ctx, img, w, h);
 
                     // --- 3秒カウントダウン (Resized Small) ---
@@ -550,8 +576,12 @@
 
                 await new Promise(resolve => {
                     const draw = () => {
-                        if (vid.paused || vid.ended) { resolve(); return; }
-                        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+                        if (vid.paused || vid.ended) {
+                            resolve();
+                            return;
+                        }
+                        ctx.fillStyle = '#000';
+                        ctx.fillRect(0, 0, w, h);
                         drawImageContain(ctx, vid, w, h);
 
                         // thumbDuration (0.1) is removed, only imgDuration (3.0) exists before video
