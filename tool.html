@@ -166,7 +166,7 @@
                             class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
                             <i class="fas fa-download mr-2"></i> <span id="dl-text">保存する</span>
                         </a>
-                        </div>
+                    </div>
                 </div>
 
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm mt-8">
@@ -178,22 +178,32 @@
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 編集・合成について</h2>
                             <div class="space-y-2 mb-4">
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">冒頭音声:</span> 広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">冒頭音声:</span>
+                                        広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。
+                                    </p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">余白:</span> 画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。</p>
-                                </div>
-                                <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">サムネイル:</span> 本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">余白:</span>
+                                        画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。
+                                    </p>
                                 </div>
                             </div>
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ</h2>
                             <div class="space-y-2">
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">所要時間:</span> 生成には本編動画の再生時間と同程度の時間がかかります。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">所要時間:</span>
+                                        生成には本編動画の再生時間と同程度の時間がかかります。
+                                    </p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">プライバシー:</span> 動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">プライバシー:</span>
+                                        動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。<br>
+                                        外部に流出することはありませんのでご安心ください。
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -225,7 +235,6 @@
         let fileVid = null;
         let isProcessing = false;
 
-        // --- Sound Generator Logic (Luxury Tone) ---
         const SoundGen = {
             playLuxuryTone: (ac, dest, tm, f, dur, brightness = 1.0) => {
                 const osc = ac.createOscillator(); osc.type = 'sine';
@@ -346,8 +355,7 @@
                 fileVid = e.target.files[0];
                 els.pVid.src = URL.createObjectURL(fileVid);
                 
-                // 【サムネイル表示用修正】
-                // 読み込み直後に0.1秒地点へシークさせ、1コマ目を表示する
+                // 【修正点】サムネイル表示用：動画の冒頭(0.1秒)へシーク
                 els.pVid.currentTime = 0.1;
 
                 document.getElementById('placeholder-vid').classList.add('hidden');
