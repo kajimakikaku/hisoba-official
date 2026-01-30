@@ -24,13 +24,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .drop-zone {
@@ -43,15 +38,8 @@
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .animate-fade-in {
@@ -166,11 +154,7 @@
                             class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
                             <i class="fas fa-download mr-2"></i> <span id="dl-text">保存する</span>
                         </a>
-                        <button onclick="location.reload()"
-                            class="inline-flex items-center justify-center bg-white text-gray-600 font-bold py-3 px-6 rounded-full border border-gray-300 hover:bg-gray-50 transition">
-                            もう一度作成
-                        </button>
-                    </div>
+                        </div>
                 </div>
 
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm mt-8">
@@ -182,31 +166,38 @@
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 編集・合成について</h2>
                             <div class="space-y-2 mb-4">
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">冒頭音声:</span>
-                                        広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">冒頭音声:</span>
+                                        広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。
+                                    </p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">余白:</span>
-                                        画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">余白:</span>
+                                        画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。
+                                    </p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">サムネイル:</span>
-                                        本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">サムネイル:</span>
+                                        本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。
+                                    </p>
                                 </div>
                             </div>
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ
-                            </h2>
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ</h2>
                             <div class="space-y-2">
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span
-                                            class="font-bold text-blue-700">所要時間:</span>
-                                        生成には本編動画の再生時間と同程度の時間がかかります（例：5分の動画なら約5分）。</p>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">所要時間:</span>
+                                        生成には本編動画の再生時間と同程度の時間がかかります。
+                                    </p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700"><span
-                                            class="font-bold text-blue-700">プライバシー:</span>
+                                    <p class="text-xs text-gray-700">
+                                        <span class="font-bold text-blue-700">プライバシー:</span>
                                         動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。<br>
-                                        外部に流出することはありませんのでご安心ください。</p>
+                                        外部に流出することはありませんのでご安心ください。
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -242,8 +233,7 @@
         const SoundGen = {
             // Shared "Luxury" Tone (FM Glass/Bell)
             playLuxuryTone: (ac, dest, tm, f, dur, brightness = 1.0) => {
-                const osc = ac.createOscillator();
-                osc.type = 'sine';
+                const osc = ac.createOscillator(); osc.type = 'sine';
                 const g = ac.createGain();
 
                 // FM Synthesis
@@ -251,10 +241,8 @@
                 mod.frequency.value = f * 2.0;
                 const modG = ac.createGain();
                 modG.gain.value = f * 0.5 * brightness;
-                mod.connect(modG);
-                modG.connect(osc.frequency);
-                mod.start(tm);
-                mod.stop(tm + dur);
+                mod.connect(modG); modG.connect(osc.frequency);
+                mod.start(tm); mod.stop(tm + dur);
 
                 osc.frequency.value = f;
 
@@ -266,10 +254,8 @@
                 // Ensure absolute 0 at end
                 g.gain.linearRampToValueAtTime(0, tm + dur);
 
-                osc.connect(g);
-                g.connect(dest);
-                osc.start(tm);
-                osc.stop(tm + dur);
+                osc.connect(g); g.connect(dest);
+                osc.start(tm); osc.stop(tm + dur);
             },
 
             // Fixed Audio: Luxury Deep (Strict 2.8s Stop)
@@ -415,6 +401,11 @@
             if (e.target.files[0]) {
                 fileVid = e.target.files[0];
                 els.pVid.src = URL.createObjectURL(fileVid);
+                
+                // 【サムネイル表示用修正】
+                // 読み込み直後に0.1秒地点へシークさせ、1コマ目を表示する
+                els.pVid.currentTime = 0.1;
+
                 document.getElementById('placeholder-vid').classList.add('hidden');
                 document.getElementById('preview-vid-box').classList.remove('hidden');
                 document.getElementById('zone-vid').classList.add('border-indigo-500', 'bg-indigo-50');
@@ -444,8 +435,11 @@
                     v.onloadedmetadata = () => r(v);
                     v.onerror = j;
                     v.src = URL.createObjectURL(fileVid);
-                    v.muted = false;
-                    v.crossOrigin = 'anonymous';
+                    // 【再生防止修正】
+                    // 音声はAudioContext経由でストリームに流すため、
+                    // ここではmuted=falseにするが、スピーカーには繋がないのでユーザーには聞こえない。
+                    v.muted = false; 
+                    v.crossOrigin = 'anonymous'; 
                 });
 
                 // 2. Setup Canvas
@@ -463,7 +457,7 @@
                 const ac = new AC();
                 const dest = ac.createMediaStreamDestination();
 
-                // Video Audio Source
+                // Video Audio Source (Connect ONLY to destination, not to speakers)
                 const vNode = ac.createMediaElementSource(vid);
                 vNode.connect(dest);
 
@@ -473,11 +467,11 @@
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
 
-                // --- 形式自動判定ロジック (A案: ハイブリッド) ---
-                let mimeType = 'video/webm;codecs=vp9'; // デフォルト
+                // --- A案: ハイブリッド形式自動判定 ---
+                // iPhone (Safari) ならMP4、それ以外はWebM
+                let mimeType = 'video/webm;codecs=vp9'; // Default
                 let ext = 'webm';
 
-                // iPhone (Safari) 判定: MP4に対応していれば優先使用
                 if (MediaRecorder.isTypeSupported('video/mp4')) {
                     mimeType = 'video/mp4';
                     ext = 'mp4';
@@ -488,7 +482,7 @@
 
                 const recorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 5000000
+                    videoBitsPerSecond: 5000000 // 5Mbps
                 });
 
                 const chunks = [];
@@ -503,8 +497,8 @@
                     const url = URL.createObjectURL(blob);
                     els.result.src = url;
                     els.dl.href = url;
-                    els.dl.download = `merged_video.${ext}`; // 拡張子を動的に設定
-                    els.dlText.textContent = `保存する (${ext.toUpperCase()})`; // ボタンの文字も変更
+                    els.dl.download = `merged_video.${ext}`; // 拡張子を動的設定
+                    els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
 
                     els.progArea.classList.add('hidden');
                     els.resArea.classList.remove('hidden');
@@ -518,27 +512,33 @@
                 recorder.start();
                 ac.resume();
 
+                // --- 【時間ズレ修正】 時計ベースのループ処理 ---
+                // フレーム数(fps)だけに依存すると、スマホの処理落ちで時間が伸びてしまうため
+                // Date.now()で実時間を計測し、きっかり3秒で終わるように制御する
+                
                 const fps = 30;
-
-                // --- Phase 1: Image (3.0s) + Audio ---
                 els.status.textContent = "ステップ 1/2: バナー画像を表示中...";
-                const imgDuration = 3.0;
+                const imgDurationMs = 3000; // 3000ミリ秒 (3秒)
+                const startTime = Date.now();
 
-                // Play Fixed Audio (Luxury Deep)
+                // 効果音再生
                 SoundGen.playFixed(ac, dest, ac.currentTime);
 
-                for (let i = 0; i < fps * imgDuration; i++) {
+                while (Date.now() - startTime < imgDurationMs) {
+                    const elapsed = Date.now() - startTime;
+                    const remaining = Math.ceil((imgDurationMs - elapsed) / 1000);
+
                     ctx.fillStyle = '#000';
                     ctx.fillRect(0, 0, w, h);
                     drawImageContain(ctx, img, w, h);
 
-                    // --- 3秒カウントダウン (Resized Small) ---
-                    const remaining = Math.ceil(imgDuration - (i / fps));
+                    // --- 3秒カウントダウン (3倍サイズに修正) ---
                     ctx.save();
-
-                    const cx = 50;
-                    const cy = 50;
-                    const r = 25;
+                    
+                    // 座標とサイズを3倍に設定
+                    const cx = 150; // 中心X (元50)
+                    const cy = 150; // 中心Y (元50)
+                    const r = 75;   // 半径 (元25)
 
                     // Black Circle
                     ctx.beginPath();
@@ -547,21 +547,22 @@
                     ctx.fill();
 
                     // White Text
-                    ctx.font = 'bold 28px "Noto Sans JP", sans-serif';
+                    ctx.font = 'bold 84px "Noto Sans JP", sans-serif'; // 文字サイズ (元28px)
                     ctx.fillStyle = 'white';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(remaining.toString(), cx, cy + 2);
+                    ctx.fillText(remaining.toString(), cx, cy + 6); // 位置微調整
 
                     ctx.restore();
                     // ---------------------------
 
-                    const currentTotalTime = (i / fps);
+                    const currentTotalTime = elapsed / 1000;
                     const totalDuration = 3.0 + vid.duration;
                     const progress = (currentTotalTime / totalDuration) * 100;
                     els.bar.style.width = `${Math.min(progress, 99)}%`;
 
-                    await new Promise(r => setTimeout(r, 1000 / fps));
+                    // 次のフレーム描画タイミングまで待機 (約33ms)
+                    await new Promise(r => setTimeout(r, 33));
                 }
 
                 // --- Phase 2: Video ---
@@ -578,7 +579,7 @@
                         ctx.fillRect(0, 0, w, h);
                         drawImageContain(ctx, vid, w, h);
 
-                        // thumbDuration (0.1) is removed, only imgDuration (3.0) exists before video
+                        // 進捗バー更新
                         const currentTotalTime = 3.0 + vid.currentTime;
                         const totalDuration = 3.0 + vid.duration;
                         const progress = (currentTotalTime / totalDuration) * 100;
@@ -592,6 +593,10 @@
 
                 els.status.textContent = "仕上げ処理中...";
                 els.bar.style.width = "100%";
+                
+                // 最後のフレームを確実に取り込むための微小ウェイト
+                await new Promise(r => setTimeout(r, 100));
+                
                 recorder.stop();
 
             } catch (e) {

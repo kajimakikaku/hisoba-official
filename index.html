@@ -49,8 +49,27 @@
                 </nav>
 
                 <div class="md:hidden">
-                    <button class="text-gray-300 hover:text-white"><i class="fas fa-bars text-2xl"></i></button>
+                    <button id="mobile-menu-btn" class="text-gray-300 hover:text-white focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 border-t border-slate-700">
+            <div class="px-4 pt-2 pb-6 space-y-3">
+                <a href="tool.html" class="block text-gray-300 hover:text-white hover:bg-slate-700 px-3 py-3 rounded-md text-base font-bold">
+                    <i class="fas fa-layer-group mr-2"></i>結合ツール
+                </a>
+                <a href="document_request.html" class="block text-gray-300 hover:text-white hover:bg-slate-700 px-3 py-3 rounded-md text-base font-bold">
+                    資料請求
+                </a>
+                <a href="#contact" class="block text-gray-300 hover:text-white hover:bg-slate-700 px-3 py-3 rounded-md text-base font-bold" onclick="toggleMobileMenu()">
+                    お問い合わせ
+                </a>
+                <a href="application_form.html" class="block bg-indigo-600 text-white px-3 py-3 rounded-md text-base font-bold text-center mt-4">
+                    お申し込み
+                </a>
             </div>
         </div>
     </header>
@@ -504,6 +523,23 @@
     </footer>
 
     <script>
+        // スマホ用メニューの開閉機能
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // スマホメニュー内のリンクを押した時にメニューを閉じる
+        function toggleMobileMenu() {
+            if (mobileMenu) {
+                mobileMenu.classList.add('hidden');
+            }
+        }
+
         function playSample(container) {
             const video = container.querySelector('video');
             const overlay = container.querySelector('.ad-overlay');
