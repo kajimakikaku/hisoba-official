@@ -24,8 +24,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .drop-zone {
@@ -38,8 +43,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .animate-fade-in {
@@ -166,38 +178,22 @@
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 編集・合成について</h2>
                             <div class="space-y-2 mb-4">
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">冒頭音声:</span>
-                                        広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。
-                                    </p>
+                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">冒頭音声:</span> 広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。</p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">余白:</span>
-                                        画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。
-                                    </p>
+                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">余白:</span> 画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。</p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">サムネイル:</span>
-                                        本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。
-                                    </p>
+                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">サムネイル:</span> 本編動画の開始時点（0秒）の画が自動的にサムネイルとして設定されます。</p>
                                 </div>
                             </div>
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ</h2>
                             <div class="space-y-2">
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">所要時間:</span>
-                                        生成には本編動画の再生時間と同程度の時間がかかります。
-                                    </p>
+                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">所要時間:</span> 生成には本編動画の再生時間と同程度の時間がかかります。</p>
                                 </div>
                                 <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">プライバシー:</span>
-                                        動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。<br>
-                                        外部に流出することはありませんのでご安心ください。
-                                    </p>
+                                    <p class="text-xs text-gray-700"><span class="font-bold text-blue-700">プライバシー:</span> 動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。</p>
                                 </div>
                             </div>
                         </div>
@@ -229,118 +225,80 @@
         let fileVid = null;
         let isProcessing = false;
 
-        // --- Sound Generator Logic ---
+        // --- Sound Generator Logic (Luxury Tone) ---
         const SoundGen = {
-            // Shared "Luxury" Tone (FM Glass/Bell)
             playLuxuryTone: (ac, dest, tm, f, dur, brightness = 1.0) => {
                 const osc = ac.createOscillator(); osc.type = 'sine';
                 const g = ac.createGain();
-
-                // FM Synthesis
                 const mod = ac.createOscillator();
                 mod.frequency.value = f * 2.0;
                 const modG = ac.createGain();
                 modG.gain.value = f * 0.5 * brightness;
                 mod.connect(modG); modG.connect(osc.frequency);
                 mod.start(tm); mod.stop(tm + dur);
-
                 osc.frequency.value = f;
-
-                // Envelope (Strict Cutoff)
                 g.gain.setValueAtTime(0, tm);
-                g.gain.linearRampToValueAtTime(0.15, tm + 0.05); // Attack
-                // Main decay
+                g.gain.linearRampToValueAtTime(0.15, tm + 0.05); 
                 g.gain.exponentialRampToValueAtTime(0.001, tm + dur - 0.05);
-                // Ensure absolute 0 at end
                 g.gain.linearRampToValueAtTime(0, tm + dur);
-
                 osc.connect(g); g.connect(dest);
                 osc.start(tm); osc.stop(tm + dur);
             },
-
-            // Fixed Audio: Luxury Deep (Strict 2.8s Stop)
             playFixed: (ac, dest, t) => {
-                // Arpeggio
                 const notes = [130.8, 164.8, 196.0, 246.9, 261.6, 293.7, 329.6];
                 notes.forEach((f, i) => {
-                    // Start: 0~0.72 | Dur: 1.0 -> End ~1.72 (Safe)
                     SoundGen.playLuxuryTone(ac, dest, t + i * 0.12, f, 1.0, 0.6);
                 });
-                // Final Chord (Target End: 2.8s)
-                // Start: 1.0s. Duration: 1.7s -> End: 2.7s (Margin for error)
                 [65.4, 130.8, 196.0].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 1.0, f, 1.7, 0.5));
             },
-
-            // 1. Standard (Original Option 7)
             lux_std: (ac, dest, t) => {
-                // Major 7th Add 9 Glissando
                 const notes = [261.6, 329.6, 392.0, 493.8, 523.2, 587.3, 659.2, 783.9];
                 notes.forEach((f, i) => {
                     SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 2.0, 1.0);
                 });
-                // Final Resolution
                 [130.8, 196.0, 261.6, 392.0].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.0, f, 2.0, 0.8));
             },
-
-            // 2. Fast (Rapid Gliss)
             lux_fast: (ac, dest, t) => {
                 const notes = [261.6, 329.6, 392.0, 493.8, 523.2, 587.3, 659.2, 783.9, 1046.5];
                 notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.08, f, 1.5, 1.2); // Faster index
+                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.08, f, 1.5, 1.2);
                 });
                 [261.6, 392.0, 523.2].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 1.5, f, 1.5, 1.0));
             },
-
-            // 3. Slow (Gentle)
             lux_slow: (ac, dest, t) => {
                 const notes = [261.6, 392.0, 493.8, 587.3, 783.9];
                 notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.4, f, 2.5, 0.7); // Slower
+                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.4, f, 2.5, 0.7);
                 });
             },
-
-            // 4. High (Sparkling)
             lux_high: (ac, dest, t) => {
-                // Octave up
                 const notes = [523.2, 659.2, 783.9, 987.7, 1046.5, 1174.7, 1318.5];
                 notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 1.5, 1.5); // Brighter
+                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 1.5, 1.5);
                 });
                 [523.2, 783.9, 1046.5].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.0, f, 2.0, 1.0));
             },
-
-            // 5. Deep (Rich)
             lux_deep: (ac, dest, t) => {
-                // Octave down
                 const notes = [130.8, 164.8, 196.0, 246.9, 261.6, 293.7, 329.6];
                 notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 3.0, 0.6); // Darker
+                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 3.0, 0.6);
                 });
                 [65.4, 130.8, 196.0].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.2, f, 3.0, 0.5));
             },
-
-            // 6. Bright (Sharp Attack)
             lux_bright: (ac, dest, t) => {
                 const notes = [261.6, 329.6, 392.0, 493.8, 523.2, 587.3, 659.2, 783.9];
                 notes.forEach((f, i) => {
-                    // High brightness multiplier
                     SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 1.5, 2.5);
                 });
                 SoundGen.playLuxuryTone(ac, dest, t + 2.0, 523.2, 2.0, 2.0);
             },
-
-            // 7. Calm (Soft)
             lux_calm: (ac, dest, t) => {
-                // Sparse notes
                 const notes = [261.6, 392.0, 523.2];
                 notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.6, f, 3.0, 0.4); // Very soft
+                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.6, f, 3.0, 0.4);
                 });
             },
-
-            // 8. Rhythm (Bouncy)
             lux_rhythm: (ac, dest, t) => {
-                // Syncopated
                 const notes = [392.0, 329.6, 261.6, 523.2, 392.0];
                 const times = [0.0, 0.3, 0.6, 1.2, 1.5];
                 notes.forEach((f, i) => {
@@ -348,31 +306,21 @@
                 });
                 SoundGen.playLuxuryTone(ac, dest, t + 2.2, 261.6, 2.0, 1.0);
             },
-
-            // 9. Minor (Melancholic Luxury)
             lux_minor: (ac, dest, t) => {
-                // C Minor 9
                 const notes = [261.6, 311.1, 392.0, 466.1, 523.2, 587.3];
                 notes.forEach((f, i) => {
                     SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 2.0, 0.8);
                 });
                 [130.8, 196.0, 261.6].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.0, f, 2.5, 0.7));
             },
-
-            // 10. Grand (Big Finish)
             lux_grand: (ac, dest, t) => {
-                // Two hand runs
                 const left = [130.8, 196.0, 261.6, 329.6];
                 const right = [523.2, 659.2, 783.9, 1046.5];
-
                 left.forEach((f, i) => SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 2.5, 0.8));
                 right.forEach((f, i) => SoundGen.playLuxuryTone(ac, dest, t + 0.5 + i * 0.1, f, 2.0, 1.2));
-
-                // Tutti
                 [130.8, 261.6, 523.2, 1046.5].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.1, f, 3.0, 1.0));
             }
         };
-
 
         function updateUI() {
             if (fileImg && fileVid && !isProcessing) {
@@ -382,9 +330,6 @@
             }
         }
 
-        // --- Event Listeners ---
-
-        // Handle Image
         els.fImg.addEventListener('change', e => {
             if (e.target.files[0]) {
                 fileImg = e.target.files[0];
@@ -396,7 +341,6 @@
             }
         });
 
-        // Handle Video
         els.fVid.addEventListener('change', e => {
             if (e.target.files[0]) {
                 fileVid = e.target.files[0];
@@ -413,7 +357,7 @@
             }
         });
 
-        // Main Process
+        // --- Main Process ---
         els.btn.addEventListener('click', async () => {
             if (!fileImg || !fileVid || isProcessing) return;
             isProcessing = true;
@@ -423,55 +367,48 @@
             els.resArea.classList.add('hidden');
 
             try {
-                // 1. Load Assets
                 const img = await new Promise((r, j) => {
-                    const i = new Image();
-                    i.onload = () => r(i);
-                    i.onerror = j;
-                    i.src = URL.createObjectURL(fileImg);
+                    const i = new Image(); i.onload = () => r(i); i.onerror = j; i.src = URL.createObjectURL(fileImg);
                 });
                 const vid = await new Promise((r, j) => {
                     const v = document.createElement('video');
-                    v.onloadedmetadata = () => r(v);
-                    v.onerror = j;
-                    v.src = URL.createObjectURL(fileVid);
-                    // 【再生防止修正】
-                    // 音声はAudioContext経由でストリームに流すため、
-                    // ここではmuted=falseにするが、スピーカーには繋がないのでユーザーには聞こえない。
+                    
+                    // 【iPhone対策】全画面化を防ぐ記述
+                    v.playsInline = true;
+                    v.webkitPlaysInline = true;
+                    v.setAttribute('playsinline', '');
+                    
+                    v.onloadedmetadata = () => r(v); v.onerror = j; v.src = URL.createObjectURL(fileVid);
+                    
+                    // 【再生防止】muted=falseにするが、スピーカーには繋がないのでユーザーには聞こえない。
                     v.muted = false; 
                     v.crossOrigin = 'anonymous'; 
                 });
 
-                // 2. Setup Canvas
                 const width = Math.max(640, vid.videoWidth);
                 const height = Math.max(360, vid.videoHeight);
                 const w = width % 2 === 0 ? width : width + 1;
                 const h = height % 2 === 0 ? height : height + 1;
 
-                els.canvas.width = w;
-                els.canvas.height = h;
+                els.canvas.width = w; els.canvas.height = h;
                 const ctx = els.canvas.getContext('2d');
 
-                // 3. Audio Setup
                 const AC = window.AudioContext || window.webkitAudioContext;
                 const ac = new AC();
                 const dest = ac.createMediaStreamDestination();
-
-                // Video Audio Source (Connect ONLY to destination, not to speakers)
                 const vNode = ac.createMediaElementSource(vid);
-                vNode.connect(dest);
+                vNode.connect(dest); // 音声は録画ストリームにのみ流す
 
-                // 4. Recorder Setup
-                const stream = els.canvas.captureStream(30); // 30fps
+                const stream = els.canvas.captureStream(30);
                 if (dest.stream.getAudioTracks().length > 0) {
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
 
-                // --- A案: ハイブリッド形式自動判定 ---
-                // iPhone (Safari) ならMP4、それ以外はWebM
-                let mimeType = 'video/webm;codecs=vp9'; // Default
+                // --- ハイブリッド判定 ---
+                let mimeType = 'video/webm;codecs=vp9'; // デフォルト
                 let ext = 'webm';
 
+                // iPhone (Safari) 判定: MP4に対応していれば優先使用
                 if (MediaRecorder.isTypeSupported('video/mp4')) {
                     mimeType = 'video/mp4';
                     ext = 'mp4';
@@ -482,29 +419,23 @@
 
                 const recorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 5000000 // 5Mbps
+                    videoBitsPerSecond: 5000000 
                 });
 
                 const chunks = [];
-                recorder.ondataavailable = e => {
-                    if (e.data.size > 0) chunks.push(e.data);
-                };
+                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
                 recorder.onstop = () => {
-                    const blob = new Blob(chunks, {
-                        type: mimeType
-                    });
+                    const blob = new Blob(chunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
                     els.result.src = url;
                     els.dl.href = url;
-                    els.dl.download = `merged_video.${ext}`; // 拡張子を動的設定
-                    els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
+                    els.dl.download = `merged_video.${ext}`; // 拡張子を動的に設定
+                    els.dlText.textContent = `保存する (${ext.toUpperCase()})`; // ボタンの文字も変更
 
                     els.progArea.classList.add('hidden');
                     els.resArea.classList.remove('hidden');
                     isProcessing = false;
-
-                    // Cleanup
                     vid.remove();
                     ac.close();
                 };
@@ -512,79 +443,64 @@
                 recorder.start();
                 ac.resume();
 
-                // --- 【時間ズレ修正】 時計ベースのループ処理 ---
-                // フレーム数(fps)だけに依存すると、スマホの処理落ちで時間が伸びてしまうため
-                // Date.now()で実時間を計測し、きっかり3秒で終わるように制御する
-                
+                // --- 【完全修正】時間管理ロジック (時計ベース) ---
                 const fps = 30;
                 els.status.textContent = "ステップ 1/2: バナー画像を表示中...";
-                const imgDurationMs = 3000; // 3000ミリ秒 (3秒)
+                const imgDurationMs = 3000; // 正確に3000ミリ秒
                 const startTime = Date.now();
 
-                // 効果音再生
                 SoundGen.playFixed(ac, dest, ac.currentTime);
 
+                // 3秒経過するまでループし続ける (フレーム数依存をやめる)
                 while (Date.now() - startTime < imgDurationMs) {
                     const elapsed = Date.now() - startTime;
                     const remaining = Math.ceil((imgDurationMs - elapsed) / 1000);
 
-                    ctx.fillStyle = '#000';
-                    ctx.fillRect(0, 0, w, h);
+                    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
                     drawImageContain(ctx, img, w, h);
 
-                    // --- 3秒カウントダウン (3倍サイズに修正) ---
+                    // --- 巨大タイマー描画 (3倍サイズ) ---
                     ctx.save();
-                    
-                    // 座標とサイズを3倍に設定
-                    const cx = 150; // 中心X (元50)
-                    const cy = 150; // 中心Y (元50)
-                    const r = 75;   // 半径 (元25)
-
-                    // Black Circle
+                    const cx = 150; // 元50
+                    const cy = 150; // 元50
+                    const r = 75;   // 元25の3倍
                     ctx.beginPath();
                     ctx.arc(cx, cy, r, 0, Math.PI * 2);
                     ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
                     ctx.fill();
-
-                    // White Text
-                    ctx.font = 'bold 84px "Noto Sans JP", sans-serif'; // 文字サイズ (元28px)
+                    ctx.font = 'bold 84px "Noto Sans JP", sans-serif'; // 元28pxの3倍
                     ctx.fillStyle = 'white';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(remaining.toString(), cx, cy + 6); // 位置微調整
-
+                    ctx.fillText(remaining.toString(), cx, cy + 6); // 微調整
                     ctx.restore();
-                    // ---------------------------
+                    // ----------------------------------
 
+                    // プログレスバー更新
                     const currentTotalTime = elapsed / 1000;
                     const totalDuration = 3.0 + vid.duration;
                     const progress = (currentTotalTime / totalDuration) * 100;
                     els.bar.style.width = `${Math.min(progress, 99)}%`;
 
-                    // 次のフレーム描画タイミングまで待機 (約33ms)
-                    await new Promise(r => setTimeout(r, 33));
+                    // 次のフレームまで待機 (約30fps)
+                    await new Promise(r => setTimeout(r, 33)); 
                 }
 
-                // --- Phase 2: Video ---
+                // --- ステップ2: 動画結合 ---
                 els.status.textContent = "ステップ 2/2: 動画を結合中...";
-                vid.play();
+                vid.play(); // 再生開始 (音はdestのみ)
 
                 await new Promise(resolve => {
                     const draw = () => {
-                        if (vid.paused || vid.ended) {
-                            resolve();
-                            return;
-                        }
-                        ctx.fillStyle = '#000';
-                        ctx.fillRect(0, 0, w, h);
+                        if (vid.paused || vid.ended) { resolve(); return; }
+                        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
                         drawImageContain(ctx, vid, w, h);
-
-                        // 進捗バー更新
+                        
                         const currentTotalTime = 3.0 + vid.currentTime;
                         const totalDuration = 3.0 + vid.duration;
                         const progress = (currentTotalTime / totalDuration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
-
+                        
                         requestAnimationFrame(draw);
                     };
                     draw();
@@ -596,7 +512,6 @@
                 
                 // 最後のフレームを確実に取り込むための微小ウェイト
                 await new Promise(r => setTimeout(r, 100));
-                
                 recorder.stop();
 
             } catch (e) {
