@@ -47,7 +47,7 @@
     <main class="flex-grow flex items-center justify-center p-4">
         <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden my-8">
             <div class="bg-indigo-600 p-6 text-white text-center relative">
-                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-wand-magic-sparkles mr-2"></i>自動最適化 広告動画ツール</h1>
+                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-wand-magic-sparkles mr-2"></i>広告動画作成ツール（隙間なし）</h1>
             </div>
 
             <div class="p-6 md:p-8 space-y-8">
@@ -64,7 +64,7 @@
                             <div id="placeholder-img" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">全体を表示します（見切れなし）</p>
+                                <p class="text-xs text-gray-400 mt-1">推奨: 1920x480 (4:1)</p>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                             <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">形に合わせて自動調整します</p>
+                                <p class="text-xs text-gray-400 mt-1">画像の上に隙間なく配置されます</p>
                             </div>
                         </div>
                     </div>
@@ -122,17 +122,19 @@
                     <div class="flex items-start">
                         <div class="flex-shrink-0 mt-0.5"><i class="fas fa-circle-info text-blue-500 text-base"></i></div>
                         <div class="ml-3 w-full">
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 自動レイアウト仕様</h2>
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 最終仕様</h2>
                             <p class="text-xs text-gray-700 mb-1">
-                                <span class="font-bold text-blue-700">横長・正方形の動画:</span>
-                                全体を<span class="font-bold">正方形 (1:1)</span> で出力します。
+                                <span class="font-bold text-blue-700">レイアウト:</span>
+                                動画は「正方形(1:1)」または「縦長(4:5)」に自動調整されます。
                             </p>
                             <p class="text-xs text-gray-700 mb-1">
-                                <span class="font-bold text-blue-700">縦長の動画:</span>
-                                全体を<span class="font-bold">縦長 (4:5)</span> で出力します。
+                                <span class="font-bold text-blue-700">配置:</span>
+                                上3/4に動画、下1/4に画像。<br>
+                                動画は<span class="font-bold text-red-500">下揃え</span>で配置されるため、画像との間に隙間はできません。
                             </p>
-                            <p class="text-xs text-gray-500 mt-2">
-                                ※画像は縮小して全体を表示します（見切れなし）。
+                            <p class="text-xs text-gray-700">
+                                <span class="font-bold text-blue-700">画像:</span>
+                                見切れないように全体を表示します（横4:縦1の画像推奨）。
                             </p>
                         </div>
                     </div>
@@ -224,6 +226,7 @@
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
+                // 基準幅（最低1080px）
                 let canvasW = Math.max(vidW, 1080);
                 if (canvasW % 2 !== 0) canvasW += 1;
                 
@@ -253,16 +256,23 @@
 
                 // B. 動画エリア（残りの上部3/4）
                 const availW = canvasW;
-                const availH = bannerY; 
+                const availH = bannerY; // 動画エリアの底辺は画像の頭
                 
+                // 動画のリサイズ計算 (contain)
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
+
+                // 配置計算
+                // X座標: 中央揃え
                 const drawVidX = (availW - drawVidW) / 2;
-                const drawVidY = (availH - drawVidH) / 2;
+                
+                // Y座標: ★下揃え★（ここが修正ポイント）
+                // availH (底辺) から動画の高さを引いた位置を開始点にする
+                const drawVidY = availH - drawVidH;
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -311,11 +321,10 @@
                         ctx.fillStyle = '#000000';
                         ctx.fillRect(0, 0, canvasW, canvasH);
 
-                        // 2. 動画描画
+                        // 2. 動画描画（下揃えで描画しているので、画像の直上に配置される）
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
 
-                        // 3. 画像描画（Containモード: 全体を表示）
-                        // 枠(bannerW, bannerH)に対して、画像(img)を縮小してフィットさせる計算
+                        // 3. 画像描画（全体表示・中央揃え）
                         const iScale = Math.min(bannerW / img.width, bannerH / img.height);
                         const iDrawW = img.width * iScale;
                         const iDrawH = img.height * iScale;
