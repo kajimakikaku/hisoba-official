@@ -10,53 +10,25 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
 
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-        }
+        body { font-family: 'Noto Sans JP', sans-serif; }
 
         .loader {
             border: 4px solid #f3f3f3;
             border-radius: 50%;
             border-top: 4px solid #4f46e5;
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .drop-zone {
-            transition: all 0.3s ease;
-        }
-
-        .drop-zone.dragover {
-            border-color: #4f46e5;
-            background-color: #eef2ff;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
+        .drop-zone { transition: all 0.3s ease; }
+        .drop-zone.dragover { border-color: #4f46e5; background-color: #eef2ff; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
 
@@ -68,43 +40,31 @@
                 <div class="flex-shrink-0 flex items-center">
                     <a href="index.html" class="font-black text-2xl tracking-tighter text-white">HISOBA</a>
                 </div>
-                <nav class="flex items-center">
-                    <a href="index.html" class="text-gray-300 hover:text-white transition text-sm font-bold">
-                        <i class="fas fa-arrow-left mr-1"></i> TOPへ戻る
-                    </a>
-                </nav>
             </div>
         </div>
     </header>
 
     <main class="flex-grow flex items-center justify-center p-4">
         <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden my-8">
-
             <div class="bg-indigo-600 p-6 text-white text-center relative">
-                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-video mr-2"></i>動画結合ツール</h1>
+                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-video mr-2"></i>動画結合ツール（下部連結）</h1>
             </div>
 
             <div class="p-6 md:p-8 space-y-8">
-
-                <div class="hidden"></div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col gap-2">
                         <label class="font-bold text-gray-700 block">
-                            <span class="bg-gray-800 text-white px-2 py-0.5 rounded text-sm mr-2">Step 1</span>広告画像
+                            <span class="bg-gray-800 text-white px-2 py-0.5 rounded text-sm mr-2">Step 1</span>帯（バナー）画像
                         </label>
-                        <div id="zone-img"
-                            class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
-                            <input type="file" id="file-img" accept="image/*"
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <div id="zone-img" class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
+                            <input type="file" id="file-img" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                             <div id="preview-img-box" class="hidden w-full h-full flex items-center justify-center p-2">
                                 <img id="preview-img" class="max-h-full max-w-full object-contain shadow-sm rounded">
                             </div>
-                            <div id="placeholder-img"
-                                class="pointer-events-none text-center group-hover:scale-105 transition-transform">
+                            <div id="placeholder-img" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">またはクリックして選択</p>
+                                <p class="text-xs text-gray-400 mt-1">動画の下に連結されます</p>
                             </div>
                         </div>
                     </div>
@@ -113,33 +73,26 @@
                         <label class="font-bold text-gray-700 block">
                             <span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm mr-2">Step 2</span>本編動画
                         </label>
-                        <div id="zone-vid"
-                            class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
-                            <input type="file" id="file-vid" accept="video/*"
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <div id="zone-vid" class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
+                            <input type="file" id="file-vid" accept="video/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                             <div id="preview-vid-box" class="hidden w-full h-full flex items-center justify-center p-2">
-                                <video id="preview-vid"
-                                    class="max-h-full max-w-full object-contain shadow-sm rounded"></video>
+                                <video id="preview-vid" class="max-h-full max-w-full object-contain shadow-sm rounded"></video>
                             </div>
-                            <div id="placeholder-vid"
-                                class="pointer-events-none text-center group-hover:scale-105 transition-transform">
+                            <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">またはクリックして選択</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-center pt-2">
-                    <button id="create-btn" disabled
-                        class="bg-gray-300 cursor-not-allowed text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 flex items-center gap-3 text-lg w-full md:w-auto justify-center transform active:scale-95">
-                        <i class="fas fa-layer-group"></i> 動画を作成する
+                    <button id="create-btn" disabled class="bg-gray-300 cursor-not-allowed text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 flex items-center gap-3 text-lg w-full md:w-auto justify-center transform active:scale-95">
+                        <i class="fas fa-layer-group"></i> 連結動画を作成する
                     </button>
                 </div>
 
-                <div id="progress-area"
-                    class="hidden space-y-4 bg-white p-6 rounded-xl border-2 border-indigo-100 shadow-inner">
+                <div id="progress-area" class="hidden space-y-4 bg-white p-6 rounded-xl border-2 border-indigo-100 shadow-inner">
                     <div class="flex justify-between items-center">
                         <div>
                             <span id="status-text" class="font-bold text-indigo-800 text-lg">処理準備中...</span>
@@ -148,22 +101,16 @@
                         <div class="loader"></div>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                        <div id="progress-bar"
-                            class="bg-indigo-600 h-3 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(79,70,229,0.5)]"
-                            style="width: 0%"></div>
+                        <div id="progress-bar" class="bg-indigo-600 h-3 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(79,70,229,0.5)]" style="width: 0%"></div>
                     </div>
                     <canvas id="canvas" class="hidden"></canvas>
                 </div>
 
-                <div id="result-area"
-                    class="hidden bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
-                    <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！
-                    </h3>
-                    <video id="result-video" controls
-                        class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
+                <div id="result-area" class="hidden bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
+                    <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！</h3>
+                    <video id="result-video" controls class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
                     <div class="flex flex-col md:flex-row justify-center gap-4">
-                        <a id="download-btn" href="#" download="merged_video.webm"
-                            class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
+                        <a id="download-btn" href="#" download="merged_video.webm" class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
                             <i class="fas fa-download mr-2"></i> <span id="dl-text">保存する</span>
                         </a>
                     </div>
@@ -171,45 +118,13 @@
 
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm mt-8">
                     <div class="flex items-start">
-                        <div class="flex-shrink-0 mt-0.5">
-                            <i class="fas fa-circle-info text-blue-500 text-base"></i>
-                        </div>
+                        <div class="flex-shrink-0 mt-0.5"><i class="fas fa-circle-info text-blue-500 text-base"></i></div>
                         <div class="ml-3 w-full">
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 編集・合成について</h2>
-                            <div class="space-y-2 mb-4">
-                                <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">冒頭音声:</span>
-                                        広告画像パートの3秒間の音声は、自動的に指定の固定音声が挿入されます。
-                                    </p>
-                                </div>
-                                <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">余白:</span>
-                                        画像と動画のサイズが異なる場合、余白には自動で黒帯（レターボックス）が挿入されます。
-                                    </p>
-                                </div>
-                            </div>
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 動作環境・セキュリティ</h2>
-                            <div class="space-y-2">
-                                <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">所要時間:</span>
-                                        生成には本編動画の再生時間と同程度の時間がかかります。
-                                    </p>
-                                </div>
-                                <div class="bg-white p-2 rounded border border-blue-100">
-                                    <p class="text-xs text-gray-700">
-                                        <span class="font-bold text-blue-700">プライバシー:</span>
-                                        動画データはサーバーへアップロードされず、お使いの端末（ブラウザ）内で処理されます。<br>
-                                        外部に流出することはありませんのでご安心ください。
-                                    </p>
-                                </div>
-                            </div>
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 連結仕様について</h2>
+                            <p class="text-xs text-gray-700">動画の下にスペースを追加し、画像を配置します。（動画の映像には被りませんが、全体の縦サイズが長くなります）</p>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
@@ -235,102 +150,6 @@
         let fileVid = null;
         let isProcessing = false;
 
-        const SoundGen = {
-            playLuxuryTone: (ac, dest, tm, f, dur, brightness = 1.0) => {
-                const osc = ac.createOscillator(); osc.type = 'sine';
-                const g = ac.createGain();
-                const mod = ac.createOscillator();
-                mod.frequency.value = f * 2.0;
-                const modG = ac.createGain();
-                modG.gain.value = f * 0.5 * brightness;
-                mod.connect(modG); modG.connect(osc.frequency);
-                mod.start(tm); mod.stop(tm + dur);
-                osc.frequency.value = f;
-                g.gain.setValueAtTime(0, tm);
-                g.gain.linearRampToValueAtTime(0.15, tm + 0.05); 
-                g.gain.exponentialRampToValueAtTime(0.001, tm + dur - 0.05);
-                g.gain.linearRampToValueAtTime(0, tm + dur);
-                osc.connect(g); g.connect(dest);
-                osc.start(tm); osc.stop(tm + dur);
-            },
-            playFixed: (ac, dest, t) => {
-                const notes = [130.8, 164.8, 196.0, 246.9, 261.6, 293.7, 329.6];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.12, f, 1.0, 0.6);
-                });
-                [65.4, 130.8, 196.0].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 1.0, f, 1.7, 0.5));
-            },
-            lux_std: (ac, dest, t) => {
-                const notes = [261.6, 329.6, 392.0, 493.8, 523.2, 587.3, 659.2, 783.9];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 2.0, 1.0);
-                });
-                [130.8, 196.0, 261.6, 392.0].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.0, f, 2.0, 0.8));
-            },
-            lux_fast: (ac, dest, t) => {
-                const notes = [261.6, 329.6, 392.0, 493.8, 523.2, 587.3, 659.2, 783.9, 1046.5];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.08, f, 1.5, 1.2);
-                });
-                [261.6, 392.0, 523.2].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 1.5, f, 1.5, 1.0));
-            },
-            lux_slow: (ac, dest, t) => {
-                const notes = [261.6, 392.0, 493.8, 587.3, 783.9];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.4, f, 2.5, 0.7);
-                });
-            },
-            lux_high: (ac, dest, t) => {
-                const notes = [523.2, 659.2, 783.9, 987.7, 1046.5, 1174.7, 1318.5];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 1.5, 1.5);
-                });
-                [523.2, 783.9, 1046.5].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.0, f, 2.0, 1.0));
-            },
-            lux_deep: (ac, dest, t) => {
-                const notes = [130.8, 164.8, 196.0, 246.9, 261.6, 293.7, 329.6];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 3.0, 0.6);
-                });
-                [65.4, 130.8, 196.0].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.2, f, 3.0, 0.5));
-            },
-            lux_bright: (ac, dest, t) => {
-                const notes = [261.6, 329.6, 392.0, 493.8, 523.2, 587.3, 659.2, 783.9];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.15, f, 1.5, 2.5);
-                });
-                SoundGen.playLuxuryTone(ac, dest, t + 2.0, 523.2, 2.0, 2.0);
-            },
-            lux_calm: (ac, dest, t) => {
-                const notes = [261.6, 392.0, 523.2];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.6, f, 3.0, 0.4);
-                });
-            },
-            lux_rhythm: (ac, dest, t) => {
-                const notes = [392.0, 329.6, 261.6, 523.2, 392.0];
-                const times = [0.0, 0.3, 0.6, 1.2, 1.5];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + times[i], f, 1.0, 1.2);
-                });
-                SoundGen.playLuxuryTone(ac, dest, t + 2.2, 261.6, 2.0, 1.0);
-            },
-            lux_minor: (ac, dest, t) => {
-                const notes = [261.6, 311.1, 392.0, 466.1, 523.2, 587.3];
-                notes.forEach((f, i) => {
-                    SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 2.0, 0.8);
-                });
-                [130.8, 196.0, 261.6].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.0, f, 2.5, 0.7));
-            },
-            lux_grand: (ac, dest, t) => {
-                const left = [130.8, 196.0, 261.6, 329.6];
-                const right = [523.2, 659.2, 783.9, 1046.5];
-                left.forEach((f, i) => SoundGen.playLuxuryTone(ac, dest, t + i * 0.2, f, 2.5, 0.8));
-                right.forEach((f, i) => SoundGen.playLuxuryTone(ac, dest, t + 0.5 + i * 0.1, f, 2.0, 1.2));
-                [130.8, 261.6, 523.2, 1046.5].forEach(f => SoundGen.playLuxuryTone(ac, dest, t + 2.1, f, 3.0, 1.0));
-            }
-        };
-
         function updateUI() {
             if (fileImg && fileVid && !isProcessing) {
                 els.btn.disabled = false;
@@ -354,10 +173,7 @@
             if (e.target.files[0]) {
                 fileVid = e.target.files[0];
                 els.pVid.src = URL.createObjectURL(fileVid);
-                
-                // 【修正点】サムネイル表示用：動画の冒頭(0.1秒)へシーク
-                els.pVid.currentTime = 0.1;
-
+                els.pVid.currentTime = 0.1; 
                 document.getElementById('placeholder-vid').classList.add('hidden');
                 document.getElementById('preview-vid-box').classList.remove('hidden');
                 document.getElementById('zone-vid').classList.add('border-indigo-500', 'bg-indigo-50');
@@ -365,7 +181,7 @@
             }
         });
 
-        // --- Main Process ---
+        // --- メイン処理 ---
         els.btn.addEventListener('click', async () => {
             if (!fileImg || !fileVid || isProcessing) return;
             isProcessing = true;
@@ -374,152 +190,148 @@
             els.progArea.classList.remove('hidden');
             els.resArea.classList.add('hidden');
 
+            // 内部処理用の変数
+            let procVid = null;
+            let ac = null;
+
             try {
-                const img = await new Promise((r, j) => {
-                    const i = new Image(); i.onload = () => r(i); i.onerror = j; i.src = URL.createObjectURL(fileImg);
+                // 1. 画像読み込み
+                const img = await new Promise((resolve, reject) => {
+                    const i = new Image();
+                    i.onload = () => resolve(i);
+                    i.onerror = reject;
+                    i.src = URL.createObjectURL(fileImg);
                 });
-                const vid = await new Promise((r, j) => {
+                
+                // 2. 動画読み込み (DOMに追加して強制レンダリングさせる)
+                procVid = await new Promise((resolve, reject) => {
                     const v = document.createElement('video');
-                    
-                    // 【iPhone対策】全画面化を防ぐ記述
                     v.playsInline = true;
                     v.webkitPlaysInline = true;
                     v.setAttribute('playsinline', '');
-                    
-                    v.onloadedmetadata = () => r(v); v.onerror = j; v.src = URL.createObjectURL(fileVid);
-                    
-                    // 【再生防止】muted=falseにするが、スピーカーには繋がないのでユーザーには聞こえない。
-                    v.muted = false; 
-                    v.crossOrigin = 'anonymous'; 
+                    v.muted = false; // 音声込みで処理
+                    v.crossOrigin = 'anonymous';
+
+                    // 画面外に配置
+                    v.style.position = 'fixed';
+                    v.style.top = '-9999px';
+                    v.style.left = '-9999px';
+                    v.style.opacity = '0';
+                    v.style.pointerEvents = 'none';
+                    document.body.appendChild(v);
+
+                    v.onloadedmetadata = () => resolve(v); 
+                    v.onerror = reject; 
+                    v.src = URL.createObjectURL(fileVid);
                 });
 
-                const width = Math.max(640, vid.videoWidth);
-                const height = Math.max(360, vid.videoHeight);
-                const w = width % 2 === 0 ? width : width + 1;
-                const h = height % 2 === 0 ? height : height + 1;
+                // 3. サイズ計算 (縦積み: 上に動画、下に画像)
+                const vidW = procVid.videoWidth;
+                const vidH = procVid.videoHeight;
 
-                els.canvas.width = w; els.canvas.height = h;
+                // 画像の幅を動画の幅に合わせる
+                const scale = vidW / img.width;
+                const imgScaledH = img.height * scale;
+
+                // 結合後の合計サイズ
+                let totalW = vidW;
+                let totalH = vidH + imgScaledH;
+
+                // エンコードエラー防止のための偶数補正
+                if (totalW % 2 !== 0) totalW += 1;
+                totalH = Math.floor(totalH);
+                if (totalH % 2 !== 0) totalH += 1;
+
+                els.canvas.width = totalW;
+                els.canvas.height = totalH;
                 const ctx = els.canvas.getContext('2d');
 
+                // 4. 音声処理 (AudioContext)
                 const AC = window.AudioContext || window.webkitAudioContext;
-                const ac = new AC();
+                ac = new AC();
                 const dest = ac.createMediaStreamDestination();
-                const vNode = ac.createMediaElementSource(vid);
-                vNode.connect(dest); // 音声は録画ストリームにのみ流す
+                const vNode = ac.createMediaElementSource(procVid);
+                vNode.connect(dest);
 
+                // ストリーム作成 (映像 + 音声)
                 const stream = els.canvas.captureStream(30);
                 if (dest.stream.getAudioTracks().length > 0) {
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
 
-                // --- ハイブリッド判定 ---
-                let mimeType = 'video/webm;codecs=vp9'; // デフォルト
+                // 対応フォーマット判定
+                let mimeType = 'video/webm;codecs=vp9';
                 let ext = 'webm';
-
-                // iPhone (Safari) 判定: MP4に対応していれば優先使用
                 if (MediaRecorder.isTypeSupported('video/mp4')) {
-                    mimeType = 'video/mp4';
-                    ext = 'mp4';
+                    mimeType = 'video/mp4'; ext = 'mp4';
                 } else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) {
-                    mimeType = 'video/webm;codecs=h264';
-                    ext = 'webm';
+                    mimeType = 'video/webm;codecs=h264'; ext = 'webm';
                 }
 
                 const recorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 5000000 
+                    videoBitsPerSecond: 5000000
                 });
 
                 const chunks = [];
                 recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
+                // 録画終了時の処理
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
                     els.result.src = url;
                     els.dl.href = url;
-                    els.dl.download = `merged_video.${ext}`; // 拡張子を動的に設定
-                    els.dlText.textContent = `保存する (${ext.toUpperCase()})`; // ボタンの文字も変更
+                    els.dl.download = `connected_video.${ext}`;
+                    els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
 
                     els.progArea.classList.add('hidden');
                     els.resArea.classList.remove('hidden');
                     isProcessing = false;
-                    vid.remove();
-                    ac.close();
+                    
+                    // お掃除
+                    if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
+                    if (ac) ac.close();
                 };
 
+                // 録画開始
                 recorder.start();
                 ac.resume();
 
-                // --- 【完全修正】時間管理ロジック (時計ベース) ---
-                const fps = 30;
-                els.status.textContent = "ステップ 1/2: バナー画像を表示中...";
-                const imgDurationMs = 3000; // 正確に3000ミリ秒
-                const startTime = Date.now();
+                // 5. 描画ループ開始
+                els.status.textContent = "動画を生成中...";
+                
+                await procVid.play();
 
-                SoundGen.playFixed(ac, dest, ac.currentTime);
-
-                // 3秒経過するまでループし続ける (フレーム数依存をやめる)
-                while (Date.now() - startTime < imgDurationMs) {
-                    const elapsed = Date.now() - startTime;
-                    const remaining = Math.ceil((imgDurationMs - elapsed) / 1000);
-
-                    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
-                    drawImageContain(ctx, img, w, h);
-
-                    // --- 巨大タイマー描画 (3倍サイズ) ---
-                    ctx.save();
-                    const cx = 150; // 元50
-                    const cy = 150; // 元50
-                    const r = 75;   // 元25の3倍
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-                    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-                    ctx.fill();
-                    ctx.font = 'bold 84px "Noto Sans JP", sans-serif'; // 元28pxの3倍
-                    ctx.fillStyle = 'white';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(remaining.toString(), cx, cy + 6); // 微調整
-                    ctx.restore();
-                    // ----------------------------------
-
-                    // プログレスバー更新
-                    const currentTotalTime = elapsed / 1000;
-                    const totalDuration = 3.0 + vid.duration;
-                    const progress = (currentTotalTime / totalDuration) * 100;
-                    els.bar.style.width = `${Math.min(progress, 99)}%`;
-
-                    // 次のフレームまで待機 (約30fps)
-                    await new Promise(r => setTimeout(r, 33)); 
-                }
-
-                // --- ステップ2: 動画結合 ---
-                els.status.textContent = "ステップ 2/2: 動画を結合中...";
-                vid.play(); // 再生開始 (音はdestのみ)
+                // 背景（黒）を初期化
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, totalW, totalH);
 
                 await new Promise(resolve => {
                     const draw = () => {
-                        if (vid.paused || vid.ended) { resolve(); return; }
-                        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
-                        drawImageContain(ctx, vid, w, h);
-                        
-                        const currentTotalTime = 3.0 + vid.currentTime;
-                        const totalDuration = 3.0 + vid.duration;
-                        const progress = (currentTotalTime / totalDuration) * 100;
+                        if (procVid.paused || procVid.ended) { resolve(); return; }
+
+                        // 上: 動画
+                        ctx.drawImage(procVid, 0, 0, vidW, vidH);
+
+                        // 下: 画像
+                        ctx.drawImage(img, 0, vidH, totalW, imgScaledH);
+
+                        // プログレスバー更新
+                        const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
-                        
+
                         requestAnimationFrame(draw);
                     };
                     draw();
-                    vid.onended = resolve;
+                    procVid.onended = resolve;
                 });
 
                 els.status.textContent = "仕上げ処理中...";
                 els.bar.style.width = "100%";
                 
-                // 最後のフレームを確実に取り込むための微小ウェイト
-                await new Promise(r => setTimeout(r, 100));
+                // 最後のフレームを確実に取り込む待機
+                await new Promise(r => setTimeout(r, 200));
                 recorder.stop();
 
             } catch (e) {
@@ -529,17 +341,12 @@
                 els.progArea.classList.add('hidden');
                 els.btn.disabled = false;
                 els.btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                
+                // エラー時もお掃除
+                if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
+                if (ac) ac.close();
             }
         });
-
-        function drawImageContain(ctx, media, cw, ch) {
-            const mw = media.videoWidth || media.naturalWidth;
-            const mh = media.videoHeight || media.naturalHeight;
-            const scale = Math.min(cw / mw, ch / mh);
-            const dw = mw * scale, dh = mh * scale;
-            ctx.drawImage(media, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
-        }
     </script>
 </body>
-
 </html>
