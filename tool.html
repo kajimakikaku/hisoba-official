@@ -47,7 +47,7 @@
     <main class="flex-grow flex items-center justify-center p-4">
         <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden my-8">
             <div class="bg-indigo-600 p-6 text-white text-center relative">
-                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-video mr-2"></i>動画結合ツール（下部連結）</h1>
+                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-crop-simple mr-2"></i>正方形広告動画メーカー</h1>
             </div>
 
             <div class="p-6 md:p-8 space-y-8">
@@ -64,7 +64,7 @@
                             <div id="placeholder-img" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">動画の下に連結されます</p>
+                                <p class="text-xs text-gray-400 mt-1">下部に配置されます</p>
                             </div>
                         </div>
                     </div>
@@ -81,6 +81,7 @@
                             <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
+                                <p class="text-xs text-gray-400 mt-1">縦・横・正方形すべて対応</p>
                             </div>
                         </div>
                     </div>
@@ -88,7 +89,7 @@
 
                 <div class="flex justify-center pt-2">
                     <button id="create-btn" disabled class="bg-gray-300 cursor-not-allowed text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 flex items-center gap-3 text-lg w-full md:w-auto justify-center transform active:scale-95">
-                        <i class="fas fa-layer-group"></i> 連結動画を作成する
+                        <i class="fas fa-layer-group"></i> 正方形動画を作成する
                     </button>
                 </div>
 
@@ -110,7 +111,7 @@
                     <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！</h3>
                     <video id="result-video" controls class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
                     <div class="flex flex-col md:flex-row justify-center gap-4">
-                        <a id="download-btn" href="#" download="merged_video.webm" class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
+                        <a id="download-btn" href="#" download="square_video.webm" class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
                             <i class="fas fa-download mr-2"></i> <span id="dl-text">保存する</span>
                         </a>
                     </div>
@@ -120,8 +121,12 @@
                     <div class="flex items-start">
                         <div class="flex-shrink-0 mt-0.5"><i class="fas fa-circle-info text-blue-500 text-base"></i></div>
                         <div class="ml-3 w-full">
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 連結仕様について</h2>
-                            <p class="text-xs text-gray-700">動画の下にスペースを追加し、画像を配置します。（動画の映像には被りませんが、全体の縦サイズが長くなります）</p>
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ レイアウト仕様（正方形・白背景）</h2>
+                            <p class="text-xs text-gray-700">
+                                1. 全体を<span class="font-bold">正方形(1:1)</span>にし、背景を<span class="font-bold">白</span>で塗りつぶします。<br>
+                                2. 画像を一番下に配置します。<br>
+                                3. 動画を残りスペースの中央に、はみ出さないよう配置します。
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -190,7 +195,6 @@
             els.progArea.classList.remove('hidden');
             els.resArea.classList.add('hidden');
 
-            // 内部処理用の変数
             let procVid = null;
             let ac = null;
 
@@ -203,16 +207,15 @@
                     i.src = URL.createObjectURL(fileImg);
                 });
                 
-                // 2. 動画読み込み (DOMに追加して強制レンダリングさせる)
+                // 2. 動画読み込み
                 procVid = await new Promise((resolve, reject) => {
                     const v = document.createElement('video');
                     v.playsInline = true;
                     v.webkitPlaysInline = true;
                     v.setAttribute('playsinline', '');
-                    v.muted = false; // 音声込みで処理
+                    v.muted = false; 
                     v.crossOrigin = 'anonymous';
 
-                    // 画面外に配置
                     v.style.position = 'fixed';
                     v.style.top = '-9999px';
                     v.style.left = '-9999px';
@@ -225,41 +228,56 @@
                     v.src = URL.createObjectURL(fileVid);
                 });
 
-                // 3. サイズ計算 (縦積み: 上に動画、下に画像)
+                // === 正方形レイアウト計算 ===
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
+                
+                // 正方形サイズを決定 (動画の長辺か、最低1080px)
+                const baseSize = Math.max(vidW, vidH, 1080);
+                const size = baseSize + (baseSize % 2); // 偶数化
 
-                // 画像の幅を動画の幅に合わせる
-                const scale = vidW / img.width;
-                const imgScaledH = img.height * scale;
-
-                // 結合後の合計サイズ
-                let totalW = vidW;
-                let totalH = vidH + imgScaledH;
-
-                // エンコードエラー防止のための偶数補正
-                if (totalW % 2 !== 0) totalW += 1;
-                totalH = Math.floor(totalH);
-                if (totalH % 2 !== 0) totalH += 1;
-
-                els.canvas.width = totalW;
-                els.canvas.height = totalH;
+                els.canvas.width = size;
+                els.canvas.height = size;
                 const ctx = els.canvas.getContext('2d');
 
-                // 4. 音声処理 (AudioContext)
+                // A. 画像（バナー）の配置計算
+                // 横幅をCanvasいっぱいに合わせる
+                const bannerScale = size / img.width;
+                const bannerW = size;
+                const bannerH = img.height * bannerScale;
+                const bannerX = 0;
+                const bannerY = size - bannerH; // 一番下
+
+                // B. 動画の配置計算
+                // 「上部～バナーの上端まで」のエリアに動画をフィットさせる
+                const availW = size;
+                const availH = bannerY; // 0 から bannerY までの高さ
+                
+                // 比率計算 (contain)
+                const scaleW = availW / vidW;
+                const scaleH = availH / vidH;
+                const vidScale = Math.min(scaleW, scaleH);
+
+                const drawVidW = vidW * vidScale;
+                const drawVidH = vidH * vidScale;
+
+                // 中央配置
+                const drawVidX = (availW - drawVidW) / 2;
+                const drawVidY = (availH - drawVidH) / 2;
+
+
+                // 3. 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
                 ac = new AC();
                 const dest = ac.createMediaStreamDestination();
                 const vNode = ac.createMediaElementSource(procVid);
                 vNode.connect(dest);
 
-                // ストリーム作成 (映像 + 音声)
                 const stream = els.canvas.captureStream(30);
                 if (dest.stream.getAudioTracks().length > 0) {
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
 
-                // 対応フォーマット判定
                 let mimeType = 'video/webm;codecs=vp9';
                 let ext = 'webm';
                 if (MediaRecorder.isTypeSupported('video/mp4')) {
@@ -270,54 +288,48 @@
 
                 const recorder = new MediaRecorder(stream, {
                     mimeType: mimeType,
-                    videoBitsPerSecond: 5000000
+                    videoBitsPerSecond: 8000000 // 画質重視で少し上げる
                 });
 
                 const chunks = [];
                 recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
-                // 録画終了時の処理
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
                     els.result.src = url;
                     els.dl.href = url;
-                    els.dl.download = `connected_video.${ext}`;
+                    els.dl.download = `square_ad_video.${ext}`;
                     els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
 
                     els.progArea.classList.add('hidden');
                     els.resArea.classList.remove('hidden');
                     isProcessing = false;
                     
-                    // お掃除
                     if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
                     if (ac) ac.close();
                 };
 
-                // 録画開始
                 recorder.start();
                 ac.resume();
 
-                // 5. 描画ループ開始
                 els.status.textContent = "動画を生成中...";
-                
                 await procVid.play();
-
-                // 背景（黒）を初期化
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, totalW, totalH);
 
                 await new Promise(resolve => {
                     const draw = () => {
                         if (procVid.paused || procVid.ended) { resolve(); return; }
 
-                        // 上: 動画
-                        ctx.drawImage(procVid, 0, 0, vidW, vidH);
+                        // 1. 白背景で塗りつぶし
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, size, size);
 
-                        // 下: 画像
-                        ctx.drawImage(img, 0, vidH, totalW, imgScaledH);
+                        // 2. 動画描画（計算した位置に）
+                        ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
 
-                        // プログレスバー更新
+                        // 3. 画像描画（一番下に）
+                        ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
+
                         const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
 
@@ -329,8 +341,6 @@
 
                 els.status.textContent = "仕上げ処理中...";
                 els.bar.style.width = "100%";
-                
-                // 最後のフレームを確実に取り込む待機
                 await new Promise(r => setTimeout(r, 200));
                 recorder.stop();
 
@@ -342,7 +352,6 @@
                 els.btn.disabled = false;
                 els.btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
                 
-                // エラー時もお掃除
                 if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
                 if (ac) ac.close();
             }
