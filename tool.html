@@ -47,7 +47,7 @@
     <main class="flex-grow flex items-center justify-center p-4">
         <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden my-8">
             <div class="bg-indigo-600 p-6 text-white text-center relative">
-                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-crop-simple mr-2"></i>正方形広告動画メーカー（黒帯・1/4）</h1>
+                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-wand-magic-sparkles mr-2"></i>自動最適化 広告動画ツール</h1>
             </div>
 
             <div class="p-6 md:p-8 space-y-8">
@@ -81,7 +81,7 @@
                             <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">縦・横・正方形すべて対応</p>
+                                <p class="text-xs text-gray-400 mt-1">形に合わせて自動調整します</p>
                             </div>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
 
                 <div class="flex justify-center pt-2">
                     <button id="create-btn" disabled class="bg-gray-300 cursor-not-allowed text-white font-bold py-4 px-12 rounded-full shadow-lg transition duration-300 flex items-center gap-3 text-lg w-full md:w-auto justify-center transform active:scale-95">
-                        <i class="fas fa-layer-group"></i> 正方形動画を作成する
+                        <i class="fas fa-layer-group"></i> 広告動画を作成する
                     </button>
                 </div>
 
@@ -109,9 +109,10 @@
 
                 <div id="result-area" class="hidden bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
                     <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！</h3>
+                    <div id="result-info" class="text-sm text-gray-600 mb-2 font-bold"></div>
                     <video id="result-video" controls class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
                     <div class="flex flex-col md:flex-row justify-center gap-4">
-                        <a id="download-btn" href="#" download="square_ad_video.webm" class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
+                        <a id="download-btn" href="#" download="ad_video.webm" class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
                             <i class="fas fa-download mr-2"></i> <span id="dl-text">保存する</span>
                         </a>
                     </div>
@@ -121,11 +122,17 @@
                     <div class="flex items-start">
                         <div class="flex-shrink-0 mt-0.5"><i class="fas fa-circle-info text-blue-500 text-base"></i></div>
                         <div class="ml-3 w-full">
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ レイアウト仕様（正方形・黒帯・1/4）</h2>
-                            <p class="text-xs text-gray-700">
-                                1. 全体を<span class="font-bold">正方形(1:1)</span>にし、背景を<span class="font-bold">黒</span>で塗りつぶします。<br>
-                                2. 下部の<span class="font-bold">4分の1のエリア</span>に、画像を(歪みなくトリミングして)配置します。<br>
-                                3. 残りの上部スペース(4分の3)の中央に、動画を配置します。
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 自動レイアウト仕様</h2>
+                            <p class="text-xs text-gray-700 mb-1">
+                                <span class="font-bold text-blue-700">横長・正方形の動画:</span>
+                                全体を<span class="font-bold">正方形 (1:1)</span> で出力します。
+                            </p>
+                            <p class="text-xs text-gray-700 mb-1">
+                                <span class="font-bold text-blue-700">縦長の動画:</span>
+                                全体を<span class="font-bold">縦長 (4:5)</span> で出力します（Xで最大表示されるサイズ）。
+                            </p>
+                            <p class="text-xs text-gray-500 mt-2">
+                                ※どちらの場合も、背景は黒、下部の1/4が広告エリアになります。
                             </p>
                         </div>
                     </div>
@@ -144,6 +151,7 @@
             status: document.getElementById('status-text'),
             bar: document.getElementById('progress-bar'),
             result: document.getElementById('result-video'),
+            resInfo: document.getElementById('result-info'),
             dl: document.getElementById('download-btn'),
             dlText: document.getElementById('dl-text'),
             canvas: document.getElementById('canvas'),
@@ -212,29 +220,52 @@
                     v.onloadedmetadata = () => resolve(v); v.onerror = reject; v.src = URL.createObjectURL(fileVid);
                 });
 
-                // === 正方形レイアウト計算 (黒帯・1/4固定) ===
+                // === レイアウト計算 (自動切替) ===
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
-                const baseSize = Math.max(vidW, vidH, 1080);
-                const size = baseSize + (baseSize % 2); // 全体の正方形サイズ
+                // 基準幅（最低1080px）
+                let canvasW = Math.max(vidW, 1080);
+                if (canvasW % 2 !== 0) canvasW += 1; // 偶数化
+                
+                let canvasH;
+                let layoutMode = "";
 
-                els.canvas.width = size;
-                els.canvas.height = size;
+                // 判定ロジック
+                if (vidH > vidW) {
+                    // 縦長動画 -> 4:5 (縦長)
+                    // 幅に対する高さの比率 1.25倍
+                    canvasH = canvasW * 1.25;
+                    layoutMode = "縦長 (4:5) モード";
+                } else {
+                    // 横長 or 正方形 -> 1:1 (正方形)
+                    canvasH = canvasW;
+                    layoutMode = "正方形 (1:1) モード";
+                }
+                
+                // 高さを偶数に補正
+                canvasH = Math.floor(canvasH);
+                if (canvasH % 2 !== 0) canvasH += 1;
+
+                els.canvas.width = canvasW;
+                els.canvas.height = canvasH;
                 const ctx = els.canvas.getContext('2d');
 
                 // A. 画像エリア（全体の1/4の高さ）
-                const bannerW = size;
-                const bannerH = size / 4; // ここで1/4に固定
+                const bannerW = canvasW;
+                const bannerH = canvasH / 4; 
                 const bannerX = 0;
-                const bannerY = size - bannerH;
+                const bannerY = canvasH - bannerH;
 
                 // B. 動画エリア（残りの上部3/4）
-                const availW = size;
+                const availW = canvasW;
                 const availH = bannerY; 
+                
+                // contain計算
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
+                
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
                 const drawVidX = (availW - drawVidW) / 2;
@@ -260,12 +291,14 @@
                 const recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 8000000 });
                 const chunks = [];
                 recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+                
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
                     els.result.src = url; els.dl.href = url;
-                    els.dl.download = `square_ad_video.${ext}`;
+                    els.dl.download = `ad_video_${layoutMode.includes("縦") ? "portrait" : "square"}.${ext}`;
                     els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
+                    els.resInfo.textContent = `出力サイズ: ${canvasW}x${canvasH} [${layoutMode}]`;
                     els.progArea.classList.add('hidden'); els.resArea.classList.remove('hidden');
                     isProcessing = false;
                     if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
@@ -274,37 +307,29 @@
 
                 recorder.start();
                 ac.resume();
-                els.status.textContent = "動画を生成中...";
+                els.status.textContent = `生成中: ${layoutMode}`;
                 await procVid.play();
 
                 await new Promise(resolve => {
                     const draw = () => {
                         if (procVid.paused || procVid.ended) { resolve(); return; }
 
-                        // 1. 黒背景で塗りつぶし
-                        ctx.fillStyle = '#000000'; // 黒に変更
-                        ctx.fillRect(0, 0, size, size);
+                        // 1. 黒背景
+                        ctx.fillStyle = '#000000';
+                        ctx.fillRect(0, 0, canvasW, canvasH);
 
-                        // 2. 動画描画（上部中央）
+                        // 2. 動画描画
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
 
-                        // 3. 画像描画（下部1/4エリアに、歪みなくトリミングして描画）
-                        // object-fit: cover のロジック
+                        // 3. 画像描画（下部1/4、cover）
                         const imgRatio = img.width / img.height;
                         const bannerRatio = bannerW / bannerH;
                         let sw, sh, sx, sy;
                         if (imgRatio > bannerRatio) {
-                            sh = img.height;
-                            sw = sh * bannerRatio;
-                            sy = 0;
-                            sx = (img.width - sw) / 2;
+                            sh = img.height; sw = sh * bannerRatio; sy = 0; sx = (img.width - sw) / 2;
                         } else {
-                            sw = img.width;
-                            sh = sw / bannerRatio;
-                            sx = 0;
-                            sy = (img.height - sh) / 2;
+                            sw = img.width; sh = sw / bannerRatio; sx = 0; sy = (img.height - sh) / 2;
                         }
-                        // 描画 (ソースの切り抜き範囲 -> ターゲットの描画範囲)
                         ctx.drawImage(img, sx, sy, sw, sh, bannerX, bannerY, bannerW, bannerH);
 
                         const progress = (procVid.currentTime / procVid.duration) * 100;
