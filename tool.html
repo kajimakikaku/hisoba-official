@@ -64,7 +64,7 @@
                             <div id="placeholder-img" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">推奨: 1920x480 (4:1)</p>
+                                <p class="text-xs text-gray-400 mt-1">全体を表示します（見切れなし）</p>
                             </div>
                         </div>
                     </div>
@@ -129,10 +129,10 @@
                             </p>
                             <p class="text-xs text-gray-700 mb-1">
                                 <span class="font-bold text-blue-700">縦長の動画:</span>
-                                全体を<span class="font-bold">縦長 (4:5)</span> で出力します（Xで最大表示されるサイズ）。
+                                全体を<span class="font-bold">縦長 (4:5)</span> で出力します。
                             </p>
                             <p class="text-xs text-gray-500 mt-2">
-                                ※どちらの場合も、背景は黒、下部の1/4が広告エリアになります。
+                                ※画像は縮小して全体を表示します（見切れなし）。
                             </p>
                         </div>
                     </div>
@@ -220,30 +220,24 @@
                     v.onloadedmetadata = () => resolve(v); v.onerror = reject; v.src = URL.createObjectURL(fileVid);
                 });
 
-                // === レイアウト計算 (自動切替) ===
+                // === レイアウト計算 ===
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
-                // 基準幅（最低1080px）
                 let canvasW = Math.max(vidW, 1080);
-                if (canvasW % 2 !== 0) canvasW += 1; // 偶数化
+                if (canvasW % 2 !== 0) canvasW += 1;
                 
                 let canvasH;
                 let layoutMode = "";
 
-                // 判定ロジック
                 if (vidH > vidW) {
-                    // 縦長動画 -> 4:5 (縦長)
-                    // 幅に対する高さの比率 1.25倍
-                    canvasH = canvasW * 1.25;
+                    canvasH = canvasW * 1.25; // 4:5
                     layoutMode = "縦長 (4:5) モード";
                 } else {
-                    // 横長 or 正方形 -> 1:1 (正方形)
-                    canvasH = canvasW;
+                    canvasH = canvasW; // 1:1
                     layoutMode = "正方形 (1:1) モード";
                 }
                 
-                // 高さを偶数に補正
                 canvasH = Math.floor(canvasH);
                 if (canvasH % 2 !== 0) canvasH += 1;
 
@@ -251,7 +245,7 @@
                 els.canvas.height = canvasH;
                 const ctx = els.canvas.getContext('2d');
 
-                // A. 画像エリア（全体の1/4の高さ）
+                // A. 画像エリア（下1/4）
                 const bannerW = canvasW;
                 const bannerH = canvasH / 4; 
                 const bannerX = 0;
@@ -261,7 +255,6 @@
                 const availW = canvasW;
                 const availH = bannerY; 
                 
-                // contain計算
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
@@ -321,16 +314,15 @@
                         // 2. 動画描画
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
 
-                        // 3. 画像描画（下部1/4、cover）
-                        const imgRatio = img.width / img.height;
-                        const bannerRatio = bannerW / bannerH;
-                        let sw, sh, sx, sy;
-                        if (imgRatio > bannerRatio) {
-                            sh = img.height; sw = sh * bannerRatio; sy = 0; sx = (img.width - sw) / 2;
-                        } else {
-                            sw = img.width; sh = sw / bannerRatio; sx = 0; sy = (img.height - sh) / 2;
-                        }
-                        ctx.drawImage(img, sx, sy, sw, sh, bannerX, bannerY, bannerW, bannerH);
+                        // 3. 画像描画（Containモード: 全体を表示）
+                        // 枠(bannerW, bannerH)に対して、画像(img)を縮小してフィットさせる計算
+                        const iScale = Math.min(bannerW / img.width, bannerH / img.height);
+                        const iDrawW = img.width * iScale;
+                        const iDrawH = img.height * iScale;
+                        const iDrawX = bannerX + (bannerW - iDrawW) / 2;
+                        const iDrawY = bannerY + (bannerH - iDrawH) / 2;
+
+                        ctx.drawImage(img, iDrawX, iDrawY, iDrawW, iDrawH);
 
                         const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
