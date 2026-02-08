@@ -47,7 +47,7 @@
     <main class="flex-grow flex items-center justify-center p-4">
         <div class="w-full max-w-3xl bg-white rounded-2xl shadow-2xl overflow-hidden my-8">
             <div class="bg-indigo-600 p-6 text-white text-center relative">
-                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-wand-magic-sparkles mr-2"></i>広告動画作成ツール（隙間なし）</h1>
+                <h1 class="text-2xl font-bold tracking-wider"><i class="fas fa-wand-magic-sparkles mr-2"></i>超リッチ広告動画ツール（完全隙間なし）</h1>
             </div>
 
             <div class="p-6 md:p-8 space-y-8">
@@ -64,7 +64,7 @@
                             <div id="placeholder-img" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">推奨: 1920x480 (4:1)</p>
+                                <p class="text-xs text-gray-400 mt-1">動画の直下に隙間なく配置されます</p>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                             <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">画像の上に隙間なく配置されます</p>
+                                <p class="text-xs text-gray-400 mt-1">形に合わせて自動調整します</p>
                             </div>
                         </div>
                     </div>
@@ -122,19 +122,19 @@
                     <div class="flex items-start">
                         <div class="flex-shrink-0 mt-0.5"><i class="fas fa-circle-info text-blue-500 text-base"></i></div>
                         <div class="ml-3 w-full">
-                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 最終仕様</h2>
+                            <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ プロ仕様の加工処理（修正版）</h2>
                             <p class="text-xs text-gray-700 mb-1">
-                                <span class="font-bold text-blue-700">レイアウト:</span>
-                                動画は「正方形(1:1)」または「縦長(4:5)」に自動調整されます。
+                                <span class="font-bold text-blue-700">完全隙間なし:</span>
+                                画像の配置を「上揃え」に変更しました。<br>
+                                これにより、縦長・横長問わず、動画と画像の間に隙間は一切できません。
                             </p>
                             <p class="text-xs text-gray-700 mb-1">
-                                <span class="font-bold text-blue-700">配置:</span>
-                                上3/4に動画、下1/4に画像。<br>
-                                動画は<span class="font-bold text-red-500">下揃え</span>で配置されるため、画像との間に隙間はできません。
+                                <span class="font-bold text-blue-700">ブラー背景:</span>
+                                動画の余白をブラー映像で埋め、リッチな見た目にします。
                             </p>
                             <p class="text-xs text-gray-700">
-                                <span class="font-bold text-blue-700">画像:</span>
-                                見切れないように全体を表示します（横4:縦1の画像推奨）。
+                                <span class="font-bold text-blue-700">自動サイズ:</span>
+                                動画に合わせて「4:5」または「1:1」に自動最適化されます。
                             </p>
                         </div>
                     </div>
@@ -226,7 +226,6 @@
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
-                // 基準幅（最低1080px）
                 let canvasW = Math.max(vidW, 1080);
                 if (canvasW % 2 !== 0) canvasW += 1;
                 
@@ -235,10 +234,10 @@
 
                 if (vidH > vidW) {
                     canvasH = canvasW * 1.25; // 4:5
-                    layoutMode = "縦長 (4:5) モード";
+                    layoutMode = "縦長 (4:5)";
                 } else {
                     canvasH = canvasW; // 1:1
-                    layoutMode = "正方形 (1:1) モード";
+                    layoutMode = "正方形 (1:1)";
                 }
                 
                 canvasH = Math.floor(canvasH);
@@ -256,7 +255,7 @@
 
                 // B. 動画エリア（残りの上部3/4）
                 const availW = canvasW;
-                const availH = bannerY; // 動画エリアの底辺は画像の頭
+                const availH = bannerY; 
                 
                 // 動画のリサイズ計算 (contain)
                 const scaleW = availW / vidW;
@@ -265,14 +264,15 @@
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
-
-                // 配置計算
-                // X座標: 中央揃え
                 const drawVidX = (availW - drawVidW) / 2;
-                
-                // Y座標: ★下揃え★（ここが修正ポイント）
-                // availH (底辺) から動画の高さを引いた位置を開始点にする
-                const drawVidY = availH - drawVidH;
+                const drawVidY = availH - drawVidH; // 下揃え
+
+                // 背景ブラー用の計算
+                const blurScale = Math.max(availW / vidW, availH / vidH);
+                const blurW = vidW * blurScale;
+                const blurH = vidH * blurScale;
+                const blurX = (availW - blurW) / 2;
+                const blurY = (availH - blurH) / 2;
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -321,15 +321,28 @@
                         ctx.fillStyle = '#000000';
                         ctx.fillRect(0, 0, canvasW, canvasH);
 
-                        // 2. 動画描画（下揃えで描画しているので、画像の直上に配置される）
+                        // 2. 背景ブラー描画
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.rect(0, 0, availW, availH); 
+                        ctx.clip();
+                        ctx.filter = 'blur(20px)';
+                        ctx.drawImage(procVid, blurX, blurY, blurW, blurH);
+                        ctx.filter = 'none';
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                        ctx.fillRect(0, 0, availW, availH);
+                        ctx.restore();
+
+                        // 3. メイン動画描画
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
 
-                        // 3. 画像描画（全体表示・中央揃え）
+                        // 4. 画像描画（★修正ポイント：上揃えに変更）
                         const iScale = Math.min(bannerW / img.width, bannerH / img.height);
                         const iDrawW = img.width * iScale;
                         const iDrawH = img.height * iScale;
                         const iDrawX = bannerX + (bannerW - iDrawW) / 2;
-                        const iDrawY = bannerY + (bannerH - iDrawH) / 2;
+                        // const iDrawY = bannerY + (bannerH - iDrawH) / 2; // ←以前の中央揃え
+                        const iDrawY = bannerY; // ★ここを修正！上揃えにする
 
                         ctx.drawImage(img, iDrawX, iDrawY, iDrawW, iDrawH);
 
