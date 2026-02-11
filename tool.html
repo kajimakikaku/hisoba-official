@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v2.1</title>
+    <title>HISOBA 動画作成ツール v3.0 (高品質版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -182,7 +182,7 @@
             if (e.target.files[0]) {
                 fileVid = e.target.files[0];
                 els.pVid.src = URL.createObjectURL(fileVid);
-                els.pVid.currentTime = 0; // プレビュー時に冒頭を表示
+                els.pVid.currentTime = 0; 
                 document.getElementById('placeholder-vid').classList.add('hidden');
                 document.getElementById('preview-vid-box').classList.remove('hidden');
                 document.getElementById('zone-vid').classList.add('border-indigo-500', 'bg-indigo-50');
@@ -208,7 +208,7 @@
                     const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = URL.createObjectURL(fileImg);
                 });
                 
-                // 動画読み込み（非表示のvideo要素を作成）
+                // 動画読み込み
                 procVid = await new Promise((resolve, reject) => {
                     const v = document.createElement('video');
                     v.playsInline = true; v.webkitPlaysInline = true; v.setAttribute('playsinline', '');
@@ -222,7 +222,6 @@
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
-                // キャンバス幅（最低1080px確保）
                 let canvasW = Math.max(vidW, 1080);
                 if (canvasW % 2 !== 0) canvasW += 1;
                 
@@ -233,7 +232,7 @@
                     canvasH = canvasW * 1.25; // 縦長動画なら 4:5
                     layoutMode = "縦長 (4:5)";
                 } else {
-                    canvasH = canvasW; // それ以外（横長・正方形）なら 1:1
+                    canvasH = canvasW; // それ以外なら 1:1
                     layoutMode = "正方形 (1:1)";
                 }
                 
@@ -245,25 +244,24 @@
                 const ctx = els.canvas.getContext('2d');
 
                 // A. 画像エリア（バナー）の設定
-                // 1920:360 の比率（約18.75%）を維持する高さを計算
+                // 1920:360 の比率（約18.75%）を維持
                 const bannerW = canvasW;
                 const bannerH = canvasW * (360 / 1920); 
                 const bannerX = 0;
                 const bannerY = canvasH - bannerH;
 
-                // B. 動画エリア（残りの上部スペース）
+                // B. 動画エリア
                 const availW = canvasW;
                 const availH = bannerY; 
                 
-                // 動画のリサイズ計算 (contain: 収める)
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
-                const drawVidX = (availW - drawVidW) / 2; // 横中央寄せ
-                const drawVidY = availH - drawVidH; // 下揃え（バナーのすぐ上に配置）
+                const drawVidX = (availW - drawVidW) / 2;
+                const drawVidY = availH - drawVidH;
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -272,28 +270,33 @@
                 const vNode = ac.createMediaElementSource(procVid);
                 vNode.connect(dest);
 
-                const stream = els.canvas.captureStream(30); // 30fps
+                // ★画質設定の変更点★
+                // 1. フレームレートを 60fps に設定（ヌルヌル動く）
+                const stream = els.canvas.captureStream(60);
                 if (dest.stream.getAudioTracks().length > 0) {
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
 
-                // コーデック選択
                 let mimeType = 'video/webm;codecs=vp9';
                 let ext = 'webm';
                 if (MediaRecorder.isTypeSupported('video/mp4')) { mimeType = 'video/mp4'; ext = 'mp4'; }
                 else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) { mimeType = 'video/webm;codecs=h264'; ext = 'webm'; }
 
-                const recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 8000000 });
+                // 2. ビットレートを 15 Mbps に設定（文字くっきり、重すぎない最適解）
+                const recorder = new MediaRecorder(stream, { 
+                    mimeType: mimeType, 
+                    videoBitsPerSecond: 15000000 // 15 Mbps
+                });
+
                 const chunks = [];
                 recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
                 
-                // 録画終了時の処理
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
                     
                     els.result.src = url;
-                    els.result.currentTime = 0; // サムネイル用に冒頭を表示させる
+                    els.result.currentTime = 0; 
                     
                     els.dl.href = url;
                     els.dl.download = `ad_video_${layoutMode.includes("縦") ? "portrait" : "square"}.${ext}`;
@@ -303,7 +306,6 @@
                     els.progArea.classList.add('hidden'); els.resArea.classList.remove('hidden');
                     isProcessing = false;
                     
-                    // お掃除
                     if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
                     if (ac) ac.close();
                 };
@@ -313,23 +315,16 @@
                 els.status.textContent = `生成中: ${layoutMode}`;
                 await procVid.play();
 
-                // 描画ループ
                 await new Promise(resolve => {
                     const draw = () => {
                         if (procVid.paused || procVid.ended) { resolve(); return; }
 
-                        // 1. 背景を真っ黒に塗りつぶす
                         ctx.fillStyle = '#000000';
                         ctx.fillRect(0, 0, canvasW, canvasH);
 
-                        // 2. メイン動画描画
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
-
-                        // 3. バナー画像描画
-                        // 1920:360比率で計算したエリアに引き伸ばして描画
                         ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
 
-                        // 進捗バー更新
                         const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
                         
