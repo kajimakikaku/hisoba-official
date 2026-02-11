@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール</title>
+    <title>HISOBA 動画作成ツール v2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -65,7 +65,7 @@
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
                                 <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                                    1920px × 480px<br>
+                                    <span class="font-bold text-indigo-600">1920px × 360px</span><br>
                                     PNGまたはJPG (5MB以内)
                                 </p>
                             </div>
@@ -113,7 +113,9 @@
                 <div id="result-area" class="hidden bg-green-50 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
                     <h3 class="text-xl font-bold text-green-800 mb-4"><i class="fas fa-check-circle mr-2"></i>動画が完成しました！</h3>
                     <div id="result-info" class="text-sm text-gray-600 mb-2 font-bold"></div>
+                    
                     <video id="result-video" controls class="w-full max-h-80 bg-black rounded-lg mb-6 mx-auto shadow-lg border border-gray-300"></video>
+                    
                     <div class="flex flex-col md:flex-row justify-center gap-4">
                         <a id="download-btn" href="#" download="ad_video.webm" class="inline-flex items-center justify-center bg-green-600 text-white font-bold py-3 px-8 rounded-full hover:bg-green-700 transition shadow-lg transform hover:-translate-y-1">
                             <i class="fas fa-download mr-2"></i> <span id="dl-text">保存する</span>
@@ -127,8 +129,8 @@
                         <div class="ml-3 w-full">
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 備考</h2>
                             <p class="text-xs text-gray-700 mb-1">
-                                <span class="font-bold text-blue-700">ブラー背景:</span>
-                                動画の余白をブラー映像で埋めます。
+                                <span class="font-bold text-blue-700">黒背景:</span>
+                                動画の余白は黒色（#000000）で統一されます。
                             </p>
                             <p class="text-xs text-gray-700">
                                 <span class="font-bold text-blue-700">自動サイズ:</span>
@@ -186,7 +188,7 @@
             if (e.target.files[0]) {
                 fileVid = e.target.files[0];
                 els.pVid.src = URL.createObjectURL(fileVid);
-                els.pVid.currentTime = 0.1; 
+                els.pVid.currentTime = 0; // プレビュー時に冒頭を表示
                 document.getElementById('placeholder-vid').classList.add('hidden');
                 document.getElementById('preview-vid-box').classList.remove('hidden');
                 document.getElementById('zone-vid').classList.add('border-indigo-500', 'bg-indigo-50');
@@ -207,10 +209,12 @@
             let ac = null;
 
             try {
+                // 画像読み込み
                 const img = await new Promise((resolve, reject) => {
                     const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = URL.createObjectURL(fileImg);
                 });
                 
+                // 動画読み込み（非表示のvideo要素を作成）
                 procVid = await new Promise((resolve, reject) => {
                     const v = document.createElement('video');
                     v.playsInline = true; v.webkitPlaysInline = true; v.setAttribute('playsinline', '');
@@ -224,6 +228,7 @@
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
+                // キャンバス幅（最低1080px確保）
                 let canvasW = Math.max(vidW, 1080);
                 if (canvasW % 2 !== 0) canvasW += 1;
                 
@@ -231,10 +236,10 @@
                 let layoutMode = "";
 
                 if (vidH > vidW) {
-                    canvasH = canvasW * 1.25; // 4:5
+                    canvasH = canvasW * 1.25; // 縦長動画なら 4:5
                     layoutMode = "縦長 (4:5)";
                 } else {
-                    canvasH = canvasW; // 1:1
+                    canvasH = canvasW; // それ以外（横長・正方形）なら 1:1
                     layoutMode = "正方形 (1:1)";
                 }
                 
@@ -245,32 +250,26 @@
                 els.canvas.height = canvasH;
                 const ctx = els.canvas.getContext('2d');
 
-                // A. 画像エリア（下1/4）
+                // A. 画像エリア（バナー）の設定
+                // 1920:360 の比率（約18.75%）を維持する高さを計算
                 const bannerW = canvasW;
-                const bannerH = canvasH / 4; 
+                const bannerH = canvasW * (360 / 1920); 
                 const bannerX = 0;
                 const bannerY = canvasH - bannerH;
 
-                // B. 動画エリア（残りの上部3/4）
+                // B. 動画エリア（残りの上部スペース）
                 const availW = canvasW;
                 const availH = bannerY; 
                 
-                // 動画のリサイズ計算 (contain)
+                // 動画のリサイズ計算 (contain: 収める)
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
-                const drawVidX = (availW - drawVidW) / 2;
-                const drawVidY = availH - drawVidH; // 下揃え
-
-                // 背景ブラー用の計算
-                const blurScale = Math.max(availW / vidW, availH / vidH);
-                const blurW = vidW * blurScale;
-                const blurH = vidH * blurScale;
-                const blurX = (availW - blurW) / 2;
-                const blurY = (availH - blurH) / 2;
+                const drawVidX = (availW - drawVidW) / 2; // 横中央寄せ
+                const drawVidY = availH - drawVidH; // 下揃え（バナーのすぐ上に配置）
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -279,11 +278,12 @@
                 const vNode = ac.createMediaElementSource(procVid);
                 vNode.connect(dest);
 
-                const stream = els.canvas.captureStream(30);
+                const stream = els.canvas.captureStream(30); // 30fps
                 if (dest.stream.getAudioTracks().length > 0) {
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
 
+                // コーデック選択
                 let mimeType = 'video/webm;codecs=vp9';
                 let ext = 'webm';
                 if (MediaRecorder.isTypeSupported('video/mp4')) { mimeType = 'video/mp4'; ext = 'mp4'; }
@@ -293,15 +293,23 @@
                 const chunks = [];
                 recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
                 
+                // 録画終了時の処理
                 recorder.onstop = () => {
                     const blob = new Blob(chunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
-                    els.result.src = url; els.dl.href = url;
+                    
+                    els.result.src = url;
+                    els.result.currentTime = 0; // ★サムネイル用に冒頭を表示させる
+                    
+                    els.dl.href = url;
                     els.dl.download = `ad_video_${layoutMode.includes("縦") ? "portrait" : "square"}.${ext}`;
                     els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
                     els.resInfo.textContent = `出力サイズ: ${canvasW}x${canvasH} [${layoutMode}]`;
+                    
                     els.progArea.classList.add('hidden'); els.resArea.classList.remove('hidden');
                     isProcessing = false;
+                    
+                    // お掃除
                     if (procVid && procVid.parentNode) procVid.parentNode.removeChild(procVid);
                     if (ac) ac.close();
                 };
@@ -311,41 +319,26 @@
                 els.status.textContent = `生成中: ${layoutMode}`;
                 await procVid.play();
 
+                // 描画ループ
                 await new Promise(resolve => {
                     const draw = () => {
                         if (procVid.paused || procVid.ended) { resolve(); return; }
 
-                        // 1. 黒背景
+                        // 1. 背景を真っ黒に塗りつぶす
                         ctx.fillStyle = '#000000';
                         ctx.fillRect(0, 0, canvasW, canvasH);
 
-                        // 2. 背景ブラー描画
-                        ctx.save();
-                        ctx.beginPath();
-                        ctx.rect(0, 0, availW, availH); 
-                        ctx.clip();
-                        ctx.filter = 'blur(20px)';
-                        ctx.drawImage(procVid, blurX, blurY, blurW, blurH);
-                        ctx.filter = 'none';
-                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-                        ctx.fillRect(0, 0, availW, availH);
-                        ctx.restore();
-
-                        // 3. メイン動画描画
+                        // 2. メイン動画描画
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
 
-                        // 4. 画像描画（★修正ポイント：上揃えに変更）
-                        const iScale = Math.min(bannerW / img.width, bannerH / img.height);
-                        const iDrawW = img.width * iScale;
-                        const iDrawH = img.height * iScale;
-                        const iDrawX = bannerX + (bannerW - iDrawW) / 2;
-                        // const iDrawY = bannerY + (bannerH - iDrawH) / 2; // ←以前の中央揃え
-                        const iDrawY = bannerY; // ★ここを修正！上揃えにする
+                        // 3. バナー画像描画
+                        // 1920:360比率で計算したエリアに引き伸ばして描画
+                        ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
 
-                        ctx.drawImage(img, iDrawX, iDrawY, iDrawW, iDrawH);
-
+                        // 進捗バー更新
                         const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
+                        
                         requestAnimationFrame(draw);
                     };
                     draw();
