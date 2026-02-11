@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v2</title>
+    <title>HISOBA 動画作成ツール v2.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -53,9 +53,6 @@
             <div class="p-6 md:p-8 space-y-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex flex-col gap-2">
-                        <label class="font-bold text-gray-700 block">
-                            <span class="bg-gray-800 text-white px-2 py-0.5 rounded text-sm mr-2">Step 1</span>帯（バナー）画像
-                        </label>
                         <div id="zone-img" class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
                             <input type="file" id="file-img" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                             <div id="preview-img-box" class="hidden w-full h-full flex items-center justify-center p-2">
@@ -63,9 +60,9 @@
                             </div>
                             <div id="placeholder-img" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
-                                <p class="text-sm text-gray-500 font-bold">画像をドロップ</p>
+                                <p class="text-sm text-gray-500 font-bold">バナー画像をドロップ</p>
                                 <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                                    <span class="font-bold text-indigo-600">1920px × 360px</span><br>
+                                    1920px × 360px<br>
                                     PNGまたはJPG (5MB以内)
                                 </p>
                             </div>
@@ -73,9 +70,6 @@
                     </div>
 
                     <div class="flex flex-col gap-2">
-                        <label class="font-bold text-gray-700 block">
-                            <span class="bg-indigo-600 text-white px-2 py-0.5 rounded text-sm mr-2">Step 2</span>本編動画
-                        </label>
                         <div id="zone-vid" class="drop-zone border-2 border-dashed border-gray-300 rounded-xl h-48 flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 relative group transition-colors">
                             <input type="file" id="file-vid" accept="video/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
                             <div id="preview-vid-box" class="hidden w-full h-full flex items-center justify-center p-2">
@@ -83,7 +77,7 @@
                             </div>
                             <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
-                                <p class="text-sm text-gray-500 font-bold">動画をドロップ</p>
+                                <p class="text-sm text-gray-500 font-bold">本編動画をドロップ</p>
                                 <p class="text-xs text-gray-400 mt-1">形に合わせて自動調整します</p>
                             </div>
                         </div>
@@ -130,7 +124,7 @@
                             <h2 class="text-blue-800 font-bold text-sm mb-2 border-b border-blue-200 pb-1">■ 備考</h2>
                             <p class="text-xs text-gray-700 mb-1">
                                 <span class="font-bold text-blue-700">黒背景:</span>
-                                動画の余白は黒色（#000000）で統一されます。
+                                動画の余白は黒色で埋められます。
                             </p>
                             <p class="text-xs text-gray-700">
                                 <span class="font-bold text-blue-700">自動サイズ:</span>
@@ -299,7 +293,7 @@
                     const url = URL.createObjectURL(blob);
                     
                     els.result.src = url;
-                    els.result.currentTime = 0; // ★サムネイル用に冒頭を表示させる
+                    els.result.currentTime = 0; // サムネイル用に冒頭を表示させる
                     
                     els.dl.href = url;
                     els.dl.download = `ad_video_${layoutMode.includes("縦") ? "portrait" : "square"}.${ext}`;
