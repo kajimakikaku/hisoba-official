@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v4.1 (12.5%版)</title>
+    <title>HISOBA 動画作成ツール v4.2 (完成版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -62,7 +62,7 @@
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">バナー画像をドロップ</p>
                                 <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                                    <span class="font-bold text-indigo-600">1920px × 240px</span><br>
+                                    1920px × 240px<br>
                                     PNGまたはJPG (5MB以内)
                                 </p>
                             </div>
@@ -244,7 +244,7 @@
                 const ctx = els.canvas.getContext('2d');
 
                 // A. 画像エリア（バナー）の設定
-                // ★修正点: 1920:240 の比率（約12.5%）に変更
+                // 1920:240 の比率（約12.5%）を維持
                 const bannerW = canvasW;
                 const bannerH = canvasW * (240 / 1920); 
                 const bannerX = 0;
@@ -261,8 +261,8 @@
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
-                const drawVidX = (availW - drawVidW) / 2;
-                const drawVidY = availH - drawVidH;
+                const drawVidX = (availW - drawVidW) / 2; // 横は中央寄せ
+                const drawVidY = availH - drawVidH;       // 下はバナー直上に配置
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -308,7 +308,7 @@
                     if (ac) ac.close();
                 };
 
-                // ★黒画面防止処理
+                // ★黒画面防止処理（手動描画）
                 ctx.fillStyle = '#000000';
                 ctx.fillRect(0, 0, canvasW, canvasH);
                 ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
