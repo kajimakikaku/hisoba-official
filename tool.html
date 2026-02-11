@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v3.0 (高品質版)</title>
+    <title>HISOBA 動画作成ツール v3.1 (フレーム修正版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -270,9 +270,7 @@
                 const vNode = ac.createMediaElementSource(procVid);
                 vNode.connect(dest);
 
-                // ★画質設定の変更点★
-                // 1. フレームレートを 60fps に設定（ヌルヌル動く）
-                const stream = els.canvas.captureStream(60);
+                const stream = els.canvas.captureStream(60); // 60fps
                 if (dest.stream.getAudioTracks().length > 0) {
                     stream.addTrack(dest.stream.getAudioTracks()[0]);
                 }
@@ -282,7 +280,6 @@
                 if (MediaRecorder.isTypeSupported('video/mp4')) { mimeType = 'video/mp4'; ext = 'mp4'; }
                 else if (MediaRecorder.isTypeSupported('video/webm;codecs=h264')) { mimeType = 'video/webm;codecs=h264'; ext = 'webm'; }
 
-                // 2. ビットレートを 15 Mbps に設定（文字くっきり、重すぎない最適解）
                 const recorder = new MediaRecorder(stream, { 
                     mimeType: mimeType, 
                     videoBitsPerSecond: 15000000 // 15 Mbps
@@ -310,6 +307,15 @@
                     if (ac) ac.close();
                 };
 
+                // ★修正点1: 録画開始の前に、手動で1コマ目を描画して「黒画面」を防ぐ
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, canvasW, canvasH);
+                // 動画の0秒目のフレームを描画
+                ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
+                // バナーを描画
+                ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
+
+                // ここから録画スタート
                 recorder.start();
                 ac.resume();
                 els.status.textContent = `生成中: ${layoutMode}`;
@@ -336,7 +342,9 @@
 
                 els.status.textContent = "仕上げ処理中...";
                 els.bar.style.width = "100%";
-                await new Promise(r => setTimeout(r, 200));
+                
+                // ★修正点2: 終了時の待機時間(setTimeout)を削除し、即座に停止させる
+                // await new Promise(r => setTimeout(r, 200));  <-- 削除
                 recorder.stop();
 
             } catch (e) {
