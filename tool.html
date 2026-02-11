@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v4.0 (正方形版)</title>
+    <title>HISOBA 動画作成ツール v4.1 (12.5%版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -62,7 +62,7 @@
                                 <i class="fas fa-image text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">バナー画像をドロップ</p>
                                 <p class="text-xs text-gray-400 mt-1 leading-relaxed">
-                                    1920px × 360px<br>
+                                    <span class="font-bold text-indigo-600">1920px × 240px</span><br>
                                     PNGまたはJPG (5MB以内)
                                 </p>
                             </div>
@@ -232,7 +232,7 @@
                 let canvasW = Math.max(vidW, 1080);
                 if (canvasW % 2 !== 0) canvasW += 1;
                 
-                // 【修正点】強制的に正方形（1:1）にする
+                // 強制的に正方形（1:1）にする
                 let canvasH = canvasW; 
                 let layoutMode = "正方形 (1:1)";
 
@@ -244,9 +244,9 @@
                 const ctx = els.canvas.getContext('2d');
 
                 // A. 画像エリア（バナー）の設定
-                // 1920:360 の比率（約18.75%）を維持
+                // ★修正点: 1920:240 の比率（約12.5%）に変更
                 const bannerW = canvasW;
-                const bannerH = canvasW * (360 / 1920); 
+                const bannerH = canvasW * (240 / 1920); 
                 const bannerX = 0;
                 const bannerY = canvasH - bannerH;
 
@@ -254,15 +254,15 @@
                 const availW = canvasW;
                 const availH = bannerY; 
                 
-                // 動画のリサイズ計算 (contain: 正方形の枠内に収める)
+                // 動画のリサイズ計算 (contain)
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
-                const drawVidX = (availW - drawVidW) / 2; // 横は中央寄せ（縦長動画なら左右に黒帯）
-                const drawVidY = availH - drawVidH;       // 下はバナー直上に配置（上は黒帯）
+                const drawVidX = (availW - drawVidW) / 2;
+                const drawVidY = availH - drawVidH;
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -308,33 +308,30 @@
                     if (ac) ac.close();
                 };
 
-                // ★★★ 黒画面防止処理 ★★★
+                // ★黒画面防止処理
                 ctx.fillStyle = '#000000';
                 ctx.fillRect(0, 0, canvasW, canvasH);
                 ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
                 ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
 
-                // 2. 準備が整ってから録画スタート
+                // 録画スタート
                 recorder.start();
                 ac.resume();
                 els.status.textContent = `生成中: ${layoutMode}`;
 
-                // 3. 動画再生開始
+                // 再生開始
                 await procVid.play();
 
                 await new Promise(resolve => {
                     const draw = () => {
                         if (procVid.paused || procVid.ended) { resolve(); return; }
 
-                        // 背景
                         ctx.fillStyle = '#000000';
                         ctx.fillRect(0, 0, canvasW, canvasH);
 
-                        // 動画とバナーの合成
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
                         ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
 
-                        // 進捗更新
                         const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
                         
@@ -346,8 +343,6 @@
 
                 els.status.textContent = "仕上げ処理中...";
                 els.bar.style.width = "100%";
-                
-                // 終了遅延なしで即停止
                 recorder.stop();
 
             } catch (e) {
