@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v3.2 (完全版)</title>
+    <title>HISOBA 動画作成ツール v4.0 (正方形版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -78,7 +78,7 @@
                             <div id="placeholder-vid" class="pointer-events-none text-center group-hover:scale-105 transition-transform">
                                 <i class="fas fa-video text-3xl text-gray-400 mb-2 group-hover:text-indigo-400"></i>
                                 <p class="text-sm text-gray-500 font-bold">本編動画をドロップ</p>
-                                <p class="text-xs text-gray-400 mt-1">形に合わせて自動調整します</p>
+                                <p class="text-xs text-gray-400 mt-1">自動的に正方形(1:1)に調整されます</p>
                             </div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
                             </p>
                             <p class="text-xs text-gray-700">
                                 <span class="font-bold text-blue-700">自動サイズ:</span>
-                                動画に合わせて「4:5」または「1:1」に自動最適化されます。
+                                どのような動画も「正方形 (1:1)」に統一されます。
                             </p>
                         </div>
                     </div>
@@ -213,11 +213,9 @@
                     const v = document.createElement('video');
                     v.playsInline = true; v.webkitPlaysInline = true; v.setAttribute('playsinline', '');
                     v.muted = false; v.crossOrigin = 'anonymous';
-                    // Video要素の設定（重要：mutedで自動再生制限を回避しつつ、AudioContextへ繋ぐ）
                     v.style.position = 'fixed'; v.style.top = '-9999px'; v.style.left = '-9999px'; v.style.opacity = '0'; v.style.pointerEvents = 'none';
                     document.body.appendChild(v);
                     
-                    // onloadeddataを使用（メタデータだけでなく1フレーム目の準備完了を待つ）
                     v.onloadeddata = () => resolve(v); 
                     v.onerror = reject; 
                     v.src = URL.createObjectURL(fileVid);
@@ -230,20 +228,14 @@
                 const vidW = procVid.videoWidth;
                 const vidH = procVid.videoHeight;
                 
+                // キャンバス幅（最低1080px確保）
                 let canvasW = Math.max(vidW, 1080);
                 if (canvasW % 2 !== 0) canvasW += 1;
                 
-                let canvasH;
-                let layoutMode = "";
+                // 【修正点】強制的に正方形（1:1）にする
+                let canvasH = canvasW; 
+                let layoutMode = "正方形 (1:1)";
 
-                if (vidH > vidW) {
-                    canvasH = canvasW * 1.25; // 縦長動画なら 4:5
-                    layoutMode = "縦長 (4:5)";
-                } else {
-                    canvasH = canvasW; // それ以外なら 1:1
-                    layoutMode = "正方形 (1:1)";
-                }
-                
                 canvasH = Math.floor(canvasH);
                 if (canvasH % 2 !== 0) canvasH += 1;
 
@@ -258,18 +250,19 @@
                 const bannerX = 0;
                 const bannerY = canvasH - bannerH;
 
-                // B. 動画エリア
+                // B. 動画エリア（バナーより上のスペース）
                 const availW = canvasW;
                 const availH = bannerY; 
                 
+                // 動画のリサイズ計算 (contain: 正方形の枠内に収める)
                 const scaleW = availW / vidW;
                 const scaleH = availH / vidH;
                 const vidScale = Math.min(scaleW, scaleH);
                 
                 const drawVidW = vidW * vidScale;
                 const drawVidH = vidH * vidScale;
-                const drawVidX = (availW - drawVidW) / 2;
-                const drawVidY = availH - drawVidH;
+                const drawVidX = (availW - drawVidW) / 2; // 横は中央寄せ（縦長動画なら左右に黒帯）
+                const drawVidY = availH - drawVidH;       // 下はバナー直上に配置（上は黒帯）
 
                 // 音声処理
                 const AC = window.AudioContext || window.webkitAudioContext;
@@ -304,7 +297,7 @@
                     els.result.currentTime = 0; 
                     
                     els.dl.href = url;
-                    els.dl.download = `ad_video_${layoutMode.includes("縦") ? "portrait" : "square"}.${ext}`;
+                    els.dl.download = `ad_video_square.${ext}`;
                     els.dlText.textContent = `保存する (${ext.toUpperCase()})`;
                     els.resInfo.textContent = `出力サイズ: ${canvasW}x${canvasH} [${layoutMode}]`;
                     
@@ -316,8 +309,6 @@
                 };
 
                 // ★★★ 黒画面防止処理 ★★★
-                // 1. 録画開始の前に、手動でキャンバスを完成させる
-                // (これで録画開始時点から絵が入っている状態になる)
                 ctx.fillStyle = '#000000';
                 ctx.fillRect(0, 0, canvasW, canvasH);
                 ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
