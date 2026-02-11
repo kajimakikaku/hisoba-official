@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HISOBA 動画作成ツール v3.1 (フレーム修正版)</title>
+    <title>HISOBA 動画作成ツール v3.2 (完全版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
@@ -213,10 +213,18 @@
                     const v = document.createElement('video');
                     v.playsInline = true; v.webkitPlaysInline = true; v.setAttribute('playsinline', '');
                     v.muted = false; v.crossOrigin = 'anonymous';
+                    // Video要素の設定（重要：mutedで自動再生制限を回避しつつ、AudioContextへ繋ぐ）
                     v.style.position = 'fixed'; v.style.top = '-9999px'; v.style.left = '-9999px'; v.style.opacity = '0'; v.style.pointerEvents = 'none';
                     document.body.appendChild(v);
-                    v.onloadedmetadata = () => resolve(v); v.onerror = reject; v.src = URL.createObjectURL(fileVid);
+                    
+                    // onloadeddataを使用（メタデータだけでなく1フレーム目の準備完了を待つ）
+                    v.onloadeddata = () => resolve(v); 
+                    v.onerror = reject; 
+                    v.src = URL.createObjectURL(fileVid);
                 });
+
+                // 動画を確実に0秒目にセット
+                procVid.currentTime = 0;
 
                 // === レイアウト計算 ===
                 const vidW = procVid.videoWidth;
@@ -307,30 +315,35 @@
                     if (ac) ac.close();
                 };
 
-                // ★修正点1: 録画開始の前に、手動で1コマ目を描画して「黒画面」を防ぐ
+                // ★★★ 黒画面防止処理 ★★★
+                // 1. 録画開始の前に、手動でキャンバスを完成させる
+                // (これで録画開始時点から絵が入っている状態になる)
                 ctx.fillStyle = '#000000';
                 ctx.fillRect(0, 0, canvasW, canvasH);
-                // 動画の0秒目のフレームを描画
                 ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
-                // バナーを描画
                 ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
 
-                // ここから録画スタート
+                // 2. 準備が整ってから録画スタート
                 recorder.start();
                 ac.resume();
                 els.status.textContent = `生成中: ${layoutMode}`;
+
+                // 3. 動画再生開始
                 await procVid.play();
 
                 await new Promise(resolve => {
                     const draw = () => {
                         if (procVid.paused || procVid.ended) { resolve(); return; }
 
+                        // 背景
                         ctx.fillStyle = '#000000';
                         ctx.fillRect(0, 0, canvasW, canvasH);
 
+                        // 動画とバナーの合成
                         ctx.drawImage(procVid, drawVidX, drawVidY, drawVidW, drawVidH);
                         ctx.drawImage(img, bannerX, bannerY, bannerW, bannerH);
 
+                        // 進捗更新
                         const progress = (procVid.currentTime / procVid.duration) * 100;
                         els.bar.style.width = `${Math.min(progress, 99)}%`;
                         
@@ -343,8 +356,7 @@
                 els.status.textContent = "仕上げ処理中...";
                 els.bar.style.width = "100%";
                 
-                // ★修正点2: 終了時の待機時間(setTimeout)を削除し、即座に停止させる
-                // await new Promise(r => setTimeout(r, 200));  <-- 削除
+                // 終了遅延なしで即停止
                 recorder.stop();
 
             } catch (e) {
