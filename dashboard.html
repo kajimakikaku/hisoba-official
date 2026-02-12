@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HISOBA - 広告配信ダッシュボード</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; }
+        @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+        .progress-bar-animated {
+            background: linear-gradient(90deg, #4f46e5 0%, #6366f1 50%, #4f46e5 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+            transition: width 1s ease-out;
+        }
+        .loading-skeleton { background: #f1f5f9; color: transparent; border-radius: 4px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-slate-900 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="font-black text-xl tracking-tighter">HISOBA</span>
+                <span class="text-xs bg-slate-700 px-2 py-0.5 rounded text-slate-300">Dashboard</span>
+            </div>
+            <div class="text-xs text-slate-400" id="last-update">更新中...</div>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-8">
+        <div class="max-w-4xl mx-auto space-y-6">
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="flex items-center gap-3 mb-1">
+                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded border border-green-200">
+                            <i class="fas fa-satellite-dish mr-1 animate-pulse"></i>配信中
+                        </span>
+                        <h1 class="text-lg font-bold text-slate-700">案件番号: <span id="campaign-id">#Loading...</span></h1>
+                    </div>
+                    <p class="text-slate-500 text-sm">広告配信キャンペーン</p>
+                </div>
+                <div class="text-right bg-slate-50 p-3 rounded-lg border border-slate-100">
+                    <p class="text-xs text-slate-500 mb-1">契約プラン</p>
+                    <p class="font-bold text-slate-800 text-lg"><span id="plan-imp">---</span> imp保証</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-900 p-4 text-white flex justify-between items-center">
+                    <h2 class="font-bold"><i class="fas fa-chart-line mr-2 text-yellow-400"></i>現在の進捗状況</h2>
+                    <span class="text-2xl font-black text-yellow-400"><span id="progress-percent">0</span><span class="text-sm font-normal text-white ml-1">% 完了</span></span>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="relative w-full h-6 bg-slate-100 rounded-full overflow-hidden mb-8 shadow-inner border border-slate-200">
+                        <div id="progress-bar" class="absolute top-0 left-0 h-full progress-bar-animated rounded-full" style="width: 0%"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:divide-x md:divide-slate-100">
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-2">現在の総インプレッション数</p>
+                            <p class="text-4xl md:text-5xl font-black text-indigo-600 tracking-tight">
+                                <span id="total-imp" class="loading-skeleton">000,000</span> <span class="text-lg font-medium text-slate-400">imp</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-2">残りインプレッション数</p>
+                            <p class="text-2xl md:text-3xl font-bold text-slate-400">あと <span id="remaining-imp">---</span> <span class="text-sm font-normal">imp</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-5 border-b border-slate-100 bg-slate-50 font-bold text-slate-700">
+                    <i class="fas fa-list-ul mr-2 text-indigo-500"></i>投稿実績リスト
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase border-b border-slate-200">
+                                <th class="p-4 font-bold">アカウント名</th>
+                                <th class="p-4 font-bold text-right">インプレッション</th>
+                                <th class="p-4 font-bold text-center">確認</th>
+                            </tr>
+                        </thead>
+                        <tbody id="influencer-list" class="text-sm divide-y divide-slate-100">
+                            <tr><td colspan="3" class="p-8 text-center text-slate-400">読み込み中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-500 py-6 text-center text-xs mt-auto">
+        <p>&copy; 2026 HISOBA. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // ▼ 設定エリア ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const TARGET_ID = urlParams.get('id'); 
+        
+        // ★ここにあなたのGASウェブアプリURLを貼り付けてください！
+        const API_URL = "https://script.google.com/macros/s/AKfycbwSGMIcDYEmonjmFBI0qzIrPVPfKbucPVE4-2Gr2m1CXCZTdQYAQgjmC7FRU14DRjPX/exec"; 
+        // ========================================================
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const today = new Date();
+            document.getElementById('last-update').innerText = `最終更新: ${today.toLocaleDateString()} ${today.toLocaleTimeString()}`;
+
+            if (!TARGET_ID) {
+                alert("URLにIDが含まれていません。");
+                return;
+            }
+
+            try {
+                // GASからデータを取得
+                const response = await fetch(`${API_URL}?id=${TARGET_ID}`);
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    document.getElementById('influencer-list').innerHTML = '<tr><td colspan="3" class="p-8 text-center text-slate-400">案件データが見つかりません。</td></tr>';
+                    return;
+                }
+
+                const row = data[0]; // セキュリティにより1件だけ届く [cite: 2026-01-30]
+
+                // 表示の反映
+                document.getElementById('campaign-id').innerText = row.campaign_id;
+                document.getElementById('plan-imp').innerText = Number(row.target_imp).toLocaleString();
+
+                const current = Number(row.current_imp) || 0;
+                const target = Number(row.target_imp) || 1; // 0除算防止
+                const progress = Math.min(Math.round((current / target) * 100), 100);
+                const remaining = Math.max(target - current, 0);
+
+                document.getElementById('total-imp').innerText = current.toLocaleString();
+                document.getElementById('total-imp').classList.remove('loading-skeleton');
+                document.getElementById('remaining-imp').innerText = remaining.toLocaleString();
+                document.getElementById('progress-percent').innerText = progress;
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+
+                // リスト生成
+                const tweetUrl = row.tweet_id ? `https://twitter.com/i/status/${row.tweet_id}` : null;
+                const linkHtml = tweetUrl ? `<a href="${tweetUrl}" target="_blank" class="text-slate-400 hover:text-blue-500"><i class="fas fa-external-link-alt"></i></a>` : '-';
+
+                document.getElementById('influencer-list').innerHTML = `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-4 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500"><i class="fas fa-user"></i></div>
+                            <span class="font-bold text-slate-700">${row.account_name || '未設定'}</span>
+                        </td>
+                        <td class="p-4 text-right font-bold text-indigo-600">${current.toLocaleString()} imp</td>
+                        <td class="p-4 text-center">${linkHtml}</td>
+                    </tr>
+                `;
+
+            } catch (error) {
+                console.error("Fetch error:", error);
+                document.getElementById('total-imp').innerText = "Err";
+            }
+        });
+    </script>
+</body>
+</html>
